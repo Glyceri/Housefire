@@ -10,61 +10,74 @@ using GXPEngine.OpenGL;
 /// For each draw call, shapes are drawn for one frame only, after rendering all sprites. 
 /// See the DrawLine method for more information.
 /// </summary>
-public class Gizmos {
-	struct DrawLineCall {
+public class Gizmos
+{
+	struct DrawLineCall
+	{
 		public float x1, y1, x2, y2;
 		public byte width;
 		public uint color;
 
-		public DrawLineCall(float x1, float y1, float x2, float y2, uint color, byte width) {
-			this.x1=x1;
-			this.y1=y1;
-			this.x2=x2;
-			this.y2=y2;
-			this.color=color;
-			this.width=width;
+		public DrawLineCall(float x1, float y1, float x2, float y2, uint color, byte width)
+		{
+			this.x1 = x1;
+			this.y1 = y1;
+			this.x2 = x2;
+			this.y2 = y2;
+			this.color = color;
+			this.width = width;
 		}
 	}
 
-	static Gizmos Instance = null;
+	public static Gizmos Instance = null;
 	static uint defaultColor = 0xffffffff;
 	static byte defaultWidth = 3;
 
 	List<DrawLineCall> drawCalls;
 
 	// Private constructor!
-	Gizmos() {
-		Game.main.OnAfterRender+=DrawLines;
-		drawCalls=new List<DrawLineCall>();
+	Gizmos()
+	{
+		Game.main.OnAfterRender += DrawLines;
+		drawCalls = new List<DrawLineCall>();
 	}
 
 	/// <summary>
 	/// Set a default color and line width for the subsequent draw calls.
 	/// The color should be given as a uint consisting of four byte values, in the order ARGB.
 	/// </summary>
-	public static void SetStyle(uint color, byte width) {
-		defaultColor=color;
-		defaultWidth=width;
+	public static void SetStyle(uint color, byte width)
+	{
+		defaultColor = color;
+		defaultWidth = width;
 	}
 
 	/// <summary>
 	/// Set a default line width for the subsequent draw calls.
 	/// </summary>
 	/// <param name="width"></param>
-	public static void SetWidth(byte width) {
-		defaultWidth=width;
+	public static void SetWidth(byte width)
+	{
+		defaultWidth = width;
 	}
 
 	/// <summary>
 	/// Set the default color for subsequent draw calls.
 	/// The R,G,B color and alpha values should be given as floats between 0 and 1.
 	/// </summary>
-	public static void SetColor(float R, float G, float B, float alpha=1) {
-		defaultColor=(ToByte(alpha)<<24) + (ToByte(R)<<16) + (ToByte(G)<<8) + (ToByte(B));
+	public static void SetColor(float R, float G, float B, float alpha = 1)
+	{
+		defaultColor = (ToByte(alpha) << 24) + (ToByte(R) << 16) + (ToByte(G) << 8) + (ToByte(B));
 	}
 
-	static uint ToByte(float value) {
+	static uint ToByte(float value)
+	{
 		return (uint)(Mathf.Clamp(value, 0, 1) * 255);
+	}
+
+	public static void DrawLine(Vector2 vec1, Vector2 vec2, GameObject space = null, uint color = 0, byte width = 0)
+	{
+		DrawLine(vec1.x, vec1.y, vec2.x, vec2.y, space, color, width);
 	}
 
 	/// <summary>
@@ -75,23 +88,31 @@ public class Gizmos {
 	/// You can give color and line width. If no values are given (=0), the default values are
 	/// used. These can be set using SetStyle, SetColor and SetWidth.
 	/// </summary>
-	public static void DrawLine(float x1, float y1, float x2 = 0, float y2 = 0, GameObject space = null, uint color = 0, byte width = 0) {
-		if (Game.main==null) {
+	public static void DrawLine(float x1, float y1, float x2 = 0, float y2 = 0, GameObject space = null, uint color = 0, byte width = 0)
+	{
+		if (Game.main == null)
+		{
 			throw new Exception("Cannot draw lines before creating a game");
 		}
-		if (Instance==null) {
-			Instance=new Gizmos();
+		if (Instance == null)
+		{
+			Instance = new Gizmos();
 		}
-		if (color==0) {
-			color=defaultColor;
+		if (color == 0)
+		{
+			color = defaultColor;
 		}
-		if (width==0) {
-			width=defaultWidth;
+		if (width == 0)
+		{
+			width = defaultWidth;
 		}
 
-		if (space==null) {
+		if (space == null)
+		{
 			Instance.drawCalls.Add(new DrawLineCall(x1, y1, x2, y2, color, width));
-		} else {
+		}
+		else
+		{
 			// transform to the given parent space:
 			Vector2 start = space.TransformPoint(x1, y1);
 			Vector2 end = space.TransformPoint(x2, y2);
@@ -103,44 +124,49 @@ public class Gizmos {
 	/// <summary>
 	/// Draws a plus shape centered at the point x,y, with given radius, using DrawLine.
 	/// </summary>
-	public static void DrawPlus(float x, float y, float radius, GameObject space = null, uint color = 0, byte width = 0) {
-		DrawLine(x-radius, y, x+radius, y, space, color, width);
-		DrawLine(x,y-radius, x, y+radius, space, color, width);
+	public static void DrawPlus(float x, float y, float radius, GameObject space = null, uint color = 0, byte width = 0)
+	{
+		DrawLine(x - radius, y, x + radius, y, space, color, width);
+		DrawLine(x, y - radius, x, y + radius, space, color, width);
 	}
 
 	/// <summary>
 	/// Draws a cross shape centered at the point x,y, with given radius, using DrawLine.
 	/// </summary>
-	public static void DrawCross(float x, float y, float radius, GameObject space = null, uint color = 0, byte width = 0) {
-		DrawLine(x-radius, y-radius, x+radius, y+radius, space, color, width);
-		DrawLine(x-radius,y+radius, x+radius, y-radius, space, color, width);
+	public static void DrawCross(float x, float y, float radius, GameObject space = null, uint color = 0, byte width = 0)
+	{
+		DrawLine(x - radius, y - radius, x + radius, y + radius, space, color, width);
+		DrawLine(x - radius, y + radius, x + radius, y - radius, space, color, width);
 	}
-	
+
 	/// <summary>
 	/// Draws a line segment from (x,y) to (x+dx, y+dy), using DrawLine.
 	/// </summary>
-	public static void DrawRay(float x, float y, float dx, float dy, GameObject space = null, uint color = 0, byte width = 0) {
-		DrawLine(x, y, x+dx, y+dy, space, color, width);
+	public static void DrawRay(float x, float y, float dx, float dy, GameObject space = null, uint color = 0, byte width = 0)
+	{
+		DrawLine(x, y, x + dx, y + dy, space, color, width);
 	}
 
 	/// <summary>
 	/// Draws a line segment starting at (x,y), with the given length and angle in degrees,
 	/// using DrawLine.
 	/// </summary>
-	public static void DrawRayAngle(float x, float y, float angleDegrees, float length, GameObject space = null, uint color = 0, byte width = 0) {
-		float dx = Mathf.Cos(angleDegrees*Mathf.PI/180) * length;
-		float dy = Mathf.Sin(angleDegrees*Mathf.PI/180) * length;
-		DrawLine(x, y, x+dx, y+dy, space, color, width);
+	public static void DrawRayAngle(float x, float y, float angleDegrees, float length, GameObject space = null, uint color = 0, byte width = 0)
+	{
+		float dx = Mathf.Cos(angleDegrees * Mathf.PI / 180) * length;
+		float dy = Mathf.Sin(angleDegrees * Mathf.PI / 180) * length;
+		DrawLine(x, y, x + dx, y + dy, space, color, width);
 	}
 
 	/// <summary>
 	/// Draws an arrow from (x,y) to (x+dx, y+dy), using DrawLine.
 	/// The relativeArrowSize is the size of the arrow head compared to the arrow length.
 	/// </summary>
-	public static void DrawArrow(float x, float y, float dx, float dy, float relativeArrowSize=0.25f, GameObject space = null, uint color = 0, byte width = 0) {
-		DrawLine(x, y, x+dx, y+dy, space, color, width);
-		DrawLine(x+dx, y+dy, x+dx*(1-relativeArrowSize)-dy*relativeArrowSize, y+dy*(1-relativeArrowSize)+dx*relativeArrowSize, space, color, width);
-		DrawLine(x+dx, y+dy, x+dx*(1-relativeArrowSize)+dy*relativeArrowSize, y+dy*(1-relativeArrowSize)-dx*relativeArrowSize, space, color, width);
+	public static void DrawArrow(float x, float y, float dx, float dy, float relativeArrowSize = 0.25f, GameObject space = null, uint color = 0, byte width = 0)
+	{
+		DrawLine(x, y, x + dx, y + dy, space, color, width);
+		DrawLine(x + dx, y + dy, x + dx * (1 - relativeArrowSize) - dy * relativeArrowSize, y + dy * (1 - relativeArrowSize) + dx * relativeArrowSize, space, color, width);
+		DrawLine(x + dx, y + dy, x + dx * (1 - relativeArrowSize) + dy * relativeArrowSize, y + dy * (1 - relativeArrowSize) - dx * relativeArrowSize, space, color, width);
 	}
 
 	/// <summary>
@@ -148,9 +174,10 @@ public class Gizmos {
 	/// using DrawLine.
 	/// The relativeArrowSize is the size of the arrow head compared to the arrow length.
 	/// </summary>
-	public static void DrawArrowAngle(float x, float y, float angleDegrees, float length, float relativeArrowSize = 0.25f, GameObject space = null, uint color = 0, byte width = 0) {
-		float dx = Mathf.Cos(angleDegrees*Mathf.PI/180) * length;
-		float dy = Mathf.Sin(angleDegrees*Mathf.PI/180) * length;
+	public static void DrawArrowAngle(float x, float y, float angleDegrees, float length, float relativeArrowSize = 0.25f, GameObject space = null, uint color = 0, byte width = 0)
+	{
+		float dx = Mathf.Cos(angleDegrees * Mathf.PI / 180) * length;
+		float dy = Mathf.Sin(angleDegrees * Mathf.PI / 180) * length;
 		DrawArrow(x, y, dx, dy, relativeArrowSize, space, color, width);
 	}
 
@@ -158,11 +185,12 @@ public class Gizmos {
 	/// Draws an axis-aligned rectangle centered at a given point, with given width and height,
 	/// using DrawLine.
 	/// </summary>
-	public static void DrawRectangle(float xCenter, float yCenter, float width, float height, GameObject space = null, uint color = 0, byte lineWidth = 0) {
-		DrawLine(xCenter-width/2, yCenter-height/2, xCenter+width/2, yCenter-height/2, space, color, lineWidth);
-		DrawLine(xCenter-width/2, yCenter+height/2, xCenter+width/2, yCenter+height/2, space, color, lineWidth);
-		DrawLine(xCenter-width/2, yCenter-height/2, xCenter-width/2, yCenter+height/2, space, color, lineWidth);
-		DrawLine(xCenter+width/2, yCenter-height/2, xCenter+width/2, yCenter+height/2, space, color, lineWidth);
+	public static void DrawRectangle(float xCenter, float yCenter, float width, float height, GameObject space = null, uint color = 0, byte lineWidth = 0)
+	{
+		DrawLine(xCenter - width / 2, yCenter - height / 2, xCenter + width / 2, yCenter - height / 2, space, color, lineWidth);
+		DrawLine(xCenter - width / 2, yCenter + height / 2, xCenter + width / 2, yCenter + height / 2, space, color, lineWidth);
+		DrawLine(xCenter - width / 2, yCenter - height / 2, xCenter - width / 2, yCenter + height / 2, space, color, lineWidth);
+		DrawLine(xCenter + width / 2, yCenter - height / 2, xCenter + width / 2, yCenter + height / 2, space, color, lineWidth);
 	}
 
 	/// <summary>
@@ -174,12 +202,16 @@ public class Gizmos {
 	/// pGlobalCoords=false, and in screen space otherwise.
 	/// You can give color and line width. 
 	/// </summary>
-	public static void RenderLine(float x1, float y1, float x2, float y2, uint pColor = 0xffffffff, uint pLineWidth = 1, bool pGlobalCoords = false) {
+	public static void RenderLine(float x1, float y1, float x2, float y2, uint pColor = 0xffffffff, uint pLineWidth = 1, bool pGlobalCoords = false)
+	{
 		if (pGlobalCoords) GL.LoadIdentity();
 		GL.Disable(GL.TEXTURE_2D);
 		GL.LineWidth(pLineWidth);
 		GL.Color4ub((byte)((pColor >> 16) & 0xff), (byte)((pColor >> 8) & 0xff), (byte)((pColor) & 0xff), (byte)((pColor >> 24) & 0xff));
-		float[] vertices = new float[] { x1, y1, x2, y2 };
+		Vector2 camPos = Camera.main?.CameraPos() ?? Vector2.Zero;
+		Vector2 vec1 = new Vector2(x1, y1) - camPos;
+		Vector2 vec2 = new Vector2(x2, y2) - camPos;
+		float[] vertices = new float[] { vec1.x, vec1.y, vec2.x, vec2.y };
 		GL.EnableClientState(GL.VERTEX_ARRAY);
 		GL.VertexPointer(2, GL.FLOAT, 0, vertices);
 		GL.DrawArrays(GL.LINES, 0, 2);
@@ -187,9 +219,12 @@ public class Gizmos {
 		GL.Enable(GL.TEXTURE_2D);
 	}
 
-	void DrawLines(GLContext glContext) {
-		if (drawCalls.Count>0) {
-			foreach (var dc in drawCalls) {
+	void DrawLines(GLContext glContext)
+	{
+		if (drawCalls.Count > 0)
+		{
+			foreach (var dc in drawCalls)
+			{
 				RenderLine(dc.x1, dc.y1, dc.x2, dc.y2, dc.color, dc.width, true);
 			}
 			drawCalls.Clear();
