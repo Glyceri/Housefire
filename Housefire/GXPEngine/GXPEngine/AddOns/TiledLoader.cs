@@ -248,7 +248,7 @@ namespace TiledMapParser {
 		/// <param name="normalizedOriginX">the new x-origin, normalized (=typically between 0 and 1)</param>
 		/// <param name="normalizedOriginY">the new y-origin, normalized (=typically between 0 and 1)</param>
 		public static void SetPositionRotationScaleOrigin(Sprite newSprite, TiledObject obj, float normalizedOriginX = 0.5f, float normalizedOriginY = 0.5f) {
-			newSprite.scale=1;
+			newSprite.scale=Vector2.One;
 			// SetOrigin according to Tiled's weird and inconsistent conventions:
 			float originY = obj.ImageID>=0 ? 1 : 0;
 			newSprite.SetOrigin(0, originY * newSprite.height);
