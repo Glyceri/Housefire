@@ -9,21 +9,31 @@ namespace GXPEngine
 	public class Transformable
 	{
 
-		protected float[] _matrix = new float[16] { 
+		protected float[] _matrix = new float[16] {
 			1.0f, 0.0f, 0.0f, 0.0f,
 			0.0f, 1.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f };
-			
+
 		protected float _rotation = 0.0f;
 		protected float _scaleX = 1.0f;
 		protected float _scaleY = 1.0f;
-		
+
 		//------------------------------------------------------------------------------------------------------------------------
 		//														Transform()
 		//------------------------------------------------------------------------------------------------------------------------
-		public Transformable () {
+		public Transformable()
+		{
 		}
+
+
+
+
+		public Vector2 position
+		{
+			get { return new Vector2(x, y); }
+		}
+
 
 		//------------------------------------------------------------------------------------------------------------------------
 		//														GetMatrix()
@@ -34,8 +44,10 @@ namespace GXPEngine
 		/// <value>
 		/// The matrix.
 		/// </value>
-		public float[] matrix {
-			get {
+		public float[] matrix
+		{
+			get
+			{
 				float[] matrix = (float[])_matrix.Clone();
 				matrix[0] *= _scaleX;
 				matrix[1] *= _scaleX;
@@ -44,7 +56,7 @@ namespace GXPEngine
 				return matrix;
 			}
 		}
-		
+
 		//------------------------------------------------------------------------------------------------------------------------
 		//														x
 		//------------------------------------------------------------------------------------------------------------------------
@@ -54,11 +66,12 @@ namespace GXPEngine
 		/// <value>
 		/// The x.
 		/// </value>
-		public float x {
+		public float x
+		{
 			get { return _matrix[12]; }
 			set { _matrix[12] = value; }
 		}
-		
+
 		//------------------------------------------------------------------------------------------------------------------------
 		//														y
 		//------------------------------------------------------------------------------------------------------------------------
@@ -68,11 +81,12 @@ namespace GXPEngine
 		/// <value>
 		/// The y.
 		/// </value>
-		public float y {
+		public float y
+		{
 			get { return _matrix[13]; }
 			set { _matrix[13] = value; }
 		}
-		
+
 		//------------------------------------------------------------------------------------------------------------------------
 		//														SetXY
 		//------------------------------------------------------------------------------------------------------------------------
@@ -85,9 +99,15 @@ namespace GXPEngine
 		/// <param name='y'>
 		/// The y coordinate.
 		/// </param>
-		public void SetXY(float x, float y) {
+		public void SetXY(float x, float y)
+		{
 			_matrix[12] = x;
 			_matrix[13] = y;
+		}
+
+		public void SetXY(Vector2 vec)
+		{
+			SetXY(vec.x, vec.y);
 		}
 
 		//------------------------------------------------------------------------------------------------------------------------
@@ -105,11 +125,11 @@ namespace GXPEngine
 		/// <param name='y'>
 		/// The y coordinate.
 		/// </param>
-		public virtual Vector2 InverseTransformPoint (float x, float y)
+		public virtual Vector2 InverseTransformPoint(float x, float y)
 		{
-			Vector2 ret = new Vector2 ();
-			x -= _matrix [12];
-			y -= _matrix [13];
+			Vector2 ret = new Vector2();
+			x -= _matrix[12];
+			y -= _matrix[13];
 			if (_scaleX != 0) ret.x = ((x * _matrix[0] + y * _matrix[1]) / _scaleX); else ret.x = 0;
 			if (_scaleY != 0) ret.y = ((x * _matrix[4] + y * _matrix[5]) / _scaleY); else ret.y = 0;
 			return ret;
@@ -119,9 +139,9 @@ namespace GXPEngine
 		/// Transforms the direction vector (x,y) from the game's global space to this object's local space.
 		/// This means that rotation and scaling is applied, but translation is not.
 		/// </summary>
-		public virtual Vector2 InverseTransformDirection (float x, float y)
+		public virtual Vector2 InverseTransformDirection(float x, float y)
 		{
-			Vector2 ret = new Vector2 ();
+			Vector2 ret = new Vector2();
 			if (_scaleX != 0) ret.x = ((x * _matrix[0] + y * _matrix[1]) / _scaleX); else ret.x = 0;
 			if (_scaleY != 0) ret.y = ((x * _matrix[4] + y * _matrix[5]) / _scaleY); else ret.y = 0;
 			return ret;
@@ -133,14 +153,14 @@ namespace GXPEngine
 		/// <summary>
 		/// Returns the distance to another Transformable
 		/// </summary>
-		public float DistanceTo (Transformable other)
+		public float DistanceTo(Transformable other)
 		{
 			float dx = other.x - x;
 			float dy = other.y - y;
 			return Mathf.Sqrt(dx * dx + dy * dy);
 		}
 
-				
+
 		//------------------------------------------------------------------------------------------------------------------------
 		//														TransformPoint()
 		//------------------------------------------------------------------------------------------------------------------------
@@ -156,18 +176,30 @@ namespace GXPEngine
 		/// <param name='y'>
 		/// The y coordinate.
 		/// </param>
-		public virtual Vector2 TransformPoint(float x, float y) {
+		public virtual Vector2 TransformPoint(float x, float y)
+		{
 			Vector2 ret = new Vector2();
 			ret.x = (_matrix[0] * x * _scaleX + _matrix[4] * y * _scaleY + _matrix[12]);
 			ret.y = (_matrix[1] * x * _scaleX + _matrix[5] * y * _scaleY + _matrix[13]);
 			return ret;
 		}
 
+		public virtual Vector2 TransformPoint(Vector2 point)
+		{
+			return TransformPoint(point.x, point.y);
+		}
+
+		public virtual Vector2 InverseTransformPoint(Vector2 point)
+		{
+			return InverseTransformPoint(point.x, point.y);
+		}
+
 		/// <summary>
 		/// Transforms a direction vector (x,y) from this object's local space to the game's global space. 
 		/// This means that rotation and scaling is applied, but translation is not.
 		/// </summary>
-		public virtual Vector2 TransformDirection(float x, float y) {
+		public virtual Vector2 TransformDirection(float x, float y)
+		{
 			Vector2 ret = new Vector2();
 			ret.x = (_matrix[0] * x * _scaleX + _matrix[4] * y * _scaleY);
 			ret.y = (_matrix[1] * x * _scaleX + _matrix[5] * y * _scaleY);
@@ -183,20 +215,25 @@ namespace GXPEngine
 		/// <value>
 		/// The rotation.
 		/// </value>
-		public float rotation {
+		public float rotation
+		{
 			get { return _rotation; }
-			set {
+			set
+			{
 				_rotation = value;
+				if (_rotation >= 360) _rotation -= (Mathf.Floor(_rotation / 360) * 360);
+				if (_rotation <= -360) _rotation += (Mathf.Floor((1-_rotation) / 360) * 360);
 				float r = _rotation * Mathf.PI / 180.0f;
-				float cs = Mathf.Cos (r);
-				float sn = Mathf.Sin (r);
+				float cs = Mathf.Cos(r);
+				float sn = Mathf.Sin(r);
+				
 				_matrix[0] = cs;
 				_matrix[1] = sn;
 				_matrix[4] = -sn;
 				_matrix[5] = cs;
 			}
 		}
-		
+
 		//------------------------------------------------------------------------------------------------------------------------
 		//														Turn()
 		//------------------------------------------------------------------------------------------------------------------------
@@ -206,10 +243,11 @@ namespace GXPEngine
 		/// <param name='angle'>
 		/// Angle.
 		/// </param>
-		public void Turn (float angle) {
+		public void Turn(float angle)
+		{
 			rotation = _rotation + angle;
 		}
-		
+
 		//------------------------------------------------------------------------------------------------------------------------
 		//														Move()
 		//------------------------------------------------------------------------------------------------------------------------
@@ -222,14 +260,20 @@ namespace GXPEngine
 		/// <param name='stepY'>
 		/// Step y.
 		/// </param>
-		public void Move (float stepX, float stepY) {
+		public void Move(float stepX, float stepY)
+		{
 			float r = _rotation * Mathf.PI / 180.0f;
-			float cs = Mathf.Cos (r);
-			float sn = Mathf.Sin (r);
+			float cs = Mathf.Cos(r);
+			float sn = Mathf.Sin(r);
 			_matrix[12] = (_matrix[12] + cs * stepX - sn * stepY);
 			_matrix[13] = (_matrix[13] + sn * stepX + cs * stepY);
 		}
-		
+
+		public void Move(Vector2 dir)
+		{
+			Move(dir.x, dir.y);
+		}
+
 		//------------------------------------------------------------------------------------------------------------------------
 		//														Translate()
 		//------------------------------------------------------------------------------------------------------------------------
@@ -242,11 +286,12 @@ namespace GXPEngine
 		/// <param name='stepY'>
 		/// Step y.
 		/// </param>
-		public void Translate (float stepX, float stepY) {
+		public void Translate(float stepX, float stepY)
+		{
 			_matrix[12] += stepX;
 			_matrix[13] += stepY;
 		}
-		
+
 		//------------------------------------------------------------------------------------------------------------------------
 		//														SetScaleXY()
 		//------------------------------------------------------------------------------------------------------------------------
@@ -259,7 +304,8 @@ namespace GXPEngine
 		/// <param name='scaleY'>
 		/// Scale y.
 		/// </param>
-		public void SetScaleXY(float scaleX, float scaleY) {
+		public void SetScaleXY(float scaleX, float scaleY)
+		{
 			_scaleX = scaleX;
 			_scaleY = scaleY;
 		}
@@ -273,7 +319,8 @@ namespace GXPEngine
 		/// <param name='scale'>
 		/// Scale x and y.
 		/// </param>
-		public void SetScaleXY(float scale) {
+		public void SetScaleXY(float scale)
+		{
 			_scaleX = scale;
 			_scaleY = scale;
 		}
@@ -287,11 +334,12 @@ namespace GXPEngine
 		/// <value>
 		/// The scale x.
 		/// </value>
-		public float scaleX {
+		public float scaleX
+		{
 			get { return _scaleX; }
 			set { _scaleX = value; }
 		}
-		
+
 		//------------------------------------------------------------------------------------------------------------------------
 		//														scaleY
 		//------------------------------------------------------------------------------------------------------------------------
@@ -301,7 +349,8 @@ namespace GXPEngine
 		/// <value>
 		/// The scale y.
 		/// </value>
-		public float scaleY {
+		public float scaleY
+		{
 			get { return _scaleY; }
 			set { _scaleY = value; }
 		}
@@ -317,7 +366,7 @@ namespace GXPEngine
 		/// <value>
 		/// The scale.
 		/// </value>
-		public float scale {
+		/*public float scale {
 			get { 
 				return _scaleX; 
 			}
@@ -325,22 +374,36 @@ namespace GXPEngine
 				_scaleX = value;
 				_scaleY = value; 
 			}
+		}*/
+
+		public Vector2 scale
+		{
+			get
+			{
+				return new Vector2(scaleX, scaleY);
+			}
+			set
+			{
+				_scaleX = value.x;
+				_scaleY = value.y;
+			}
 		}
 
 		/// <summary>
 		/// Returns the inverse matrix transformation, if it exists.
 		/// (Use this e.g. for cameras used by sub windows)
 		/// </summary>
-		public Transformable Inverse() {
-			Transformable inv=new Transformable();
+		public Transformable Inverse()
+		{
+			Transformable inv = new Transformable();
 			if (scaleX == 0 || scaleY == 0)
-				throw new Exception ("Cannot invert a transform with scale 0");
-			float cs = _matrix [0];
-			float sn = _matrix [1];
-			inv._matrix [0] = cs / scaleX;
-			inv._matrix [1] = -sn / scaleY;
-			inv._matrix [4] = sn / scaleX;
-			inv._matrix [5] = cs / scaleY;
+				throw new Exception("Cannot invert a transform with scale 0");
+			float cs = _matrix[0];
+			float sn = _matrix[1];
+			inv._matrix[0] = cs / scaleX;
+			inv._matrix[1] = -sn / scaleY;
+			inv._matrix[4] = sn / scaleX;
+			inv._matrix[5] = cs / scaleY;
 			inv.x = (-x * cs - y * sn) / scaleX;
 			inv.y = (x * sn - y * cs) / scaleY;
 			return inv;
