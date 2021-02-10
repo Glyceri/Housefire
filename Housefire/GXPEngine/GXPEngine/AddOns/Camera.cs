@@ -1,11 +1,27 @@
-namespace GXPEngine {
+using System;
+
+namespace GXPEngine
+{
 	/// <summary>
 	/// A Camera gameobject, that owns a rectangular render window, and determines the focal point, rotation and scale
 	/// of what's rendered in that window.
 	/// (Don't forget to add this as child somewhere in the hierarchy.)
 	/// </summary>
-	class Camera : GameObject {
-		Window _renderTarget;
+	public class Camera : GameObject
+	{
+		Window renderTarget;
+		public static Camera main;
+
+		public Vector2 CameraPos()
+		{
+			return (parent != null ? TransformPoint(x - (renderTarget.width / 2), y - (renderTarget.height / 2)) : TransformPoint(x, y));
+		}
+
+		public Vector2 ScreenToWorldPos(Vector2 screenPoint)
+		{
+
+			return CameraPos() + screenPoint;
+		}
 
 		/// <summary>
 		/// Creates a camera game object and a sub window to render to.
@@ -17,13 +33,24 @@ namespace GXPEngine {
 		/// <param name="windowY">Top y coordinate of the render window.</param>
 		/// <param name="windowWidth">Width of the render window.</param>
 		/// <param name="windowHeight">Height of the render window.</param>
-		public Camera(int windowX, int windowY, int windowWidth, int windowHeight) {
-			_renderTarget = new Window (windowX, windowY, windowWidth, windowHeight, this);
-			game.OnAfterRender += _renderTarget.RenderWindow;
+		public Camera(int windowX, int windowY, int windowWidth, int windowHeight)
+		{
+			main = this;
+			renderTarget = new Window(windowX, windowY, windowWidth, windowHeight, this);
+			Gizmos.Instance = null;
+			game.OnAfterRender += renderTarget.RenderWindow;
+
+
+
 		}
 
-		protected override void OnDestroy() {
-			game.OnAfterRender -= _renderTarget.RenderWindow;
+		protected override void OnDestroy()
+		{
+
+			game.OnAfterRender -= renderTarget.RenderWindow;
+			renderTarget = null;
+			main = null;
 		}
+
 	}
 }
