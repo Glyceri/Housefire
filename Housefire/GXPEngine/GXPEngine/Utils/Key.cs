@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 
 namespace GXPEngine
 {
@@ -8,6 +9,12 @@ namespace GXPEngine
 	/// </summary>
 	public class Key
 	{
+		public static Key Instance;
+		static Key()
+        {
+			Instance = new Key();
+		}
+
 		public const int F1			= 258;
 		public const int F2			= 259;
 		public const int F3			= 260;
@@ -98,6 +105,21 @@ namespace GXPEngine
 		public const int DOT = 46;
 		public const int QUESTION_MARK = 47;
 
+		public static string Name(int key)
+		{
+			foreach(FieldInfo field in typeof(Key).GetFields())
+            {
+				try
+				{
+					if (field.GetValue(Instance).ToString() == key.ToString())
+					{
+						return field.Name;
+					}
+                }
+                catch { }
+            }
+			return null;
+		}
 	}
 }
 

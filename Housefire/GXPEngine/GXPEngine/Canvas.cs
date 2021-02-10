@@ -94,6 +94,18 @@ namespace GXPEngine
 			graphics.DrawImage(sprite.texture.bitmap, destPoints);
 		}
 
+		public void DrawSprite(Bitmap bitmap)
+        {
+			graphics.DrawImage(bitmap, 0, 0);
+        }
+
+		public void DrawSprite(Bitmap bitmap, double xOffset = 0, double yOffset = 0, bool repeat = false)
+		{
+			graphics.DrawImage(bitmap, (float)(xOffset * bitmap.Width * 0.5f), (float)(yOffset * bitmap.Height));
+			if(repeat) graphics.DrawImage(bitmap, (float)((xOffset == 0 ? 0 : (xOffset * bitmap.Width) - bitmap.Width) *0.5f), (float)(yOffset == 0 ? 0 : (yOffset * bitmap.Height) - bitmap.Height));
+		}
+
+
 		// Called by the garbage collector
 		~Canvas() {
 			_graphics.Dispose();

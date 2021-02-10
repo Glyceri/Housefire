@@ -108,6 +108,8 @@ namespace GXPEngine
 		/// </param>
 		public virtual void Render(GLContext glContext) {
 			if (visible) {
+				if (MyGame.drawCollision) collider?.DrawSelf();
+
 				glContext.PushMatrix(matrix);
 				
 				RenderSelf (glContext);

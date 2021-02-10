@@ -11,7 +11,7 @@ namespace GXPEngine
 	/// The Sound Class represents a Sound resource in memory
 	/// You can load .mp3, .ogg or .wav
 	/// </summary>
-	public class Sound
+	public class Sound : IDisposable
 	{
         private static Dictionary<string, IntPtr> _soundCache = new Dictionary<string, IntPtr>();
 
@@ -36,7 +36,7 @@ namespace GXPEngine
         /// <param name='cached'>
         /// If set to <c>true</c>, the sound will be stored in cache, preserving memory when creating the same sound multiple times.
         /// </param>
-        public Sound( String filename, bool looping = false, bool streaming = false)
+        public Sound(string filename, bool looping = false, bool streaming = false)
 		{
             _system = GLContext.soundSystem;
 
@@ -61,7 +61,16 @@ namespace GXPEngine
 		
 		~Sound()
 		{
+			
 		}
+
+		public void Dispose()
+        {
+			Stop();
+			soundChannel = null;
+		}
+
+		SoundChannel soundChannel;
 
 		/// <summary>
 		/// Play the specified paused and return the newly created SoundChannel
@@ -90,8 +99,14 @@ namespace GXPEngine
 			}
 			#endif
 			uint channelID = _system.PlaySound(_id, channelId, paused, volume, pan);
-			SoundChannel soundChannel = new SoundChannel( channelID );
+			soundChannel = new SoundChannel( channelID );
 			return soundChannel;
 		}
+
+		public void Stop()
+        {
+			soundChannel.Stop();
+			
+        }
 	}
 }

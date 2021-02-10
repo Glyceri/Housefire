@@ -1,35 +1,91 @@
-using System;									// System contains a lot of default C# libraries 
+using System;                                   // System contains a lot of default C# libraries 
+using System.Diagnostics;
 using System.Drawing;                           // System.Drawing contains a library used for canvas drawing below
-using GXPEngine;								// GXPEngine contains the engine
+using System.Threading;
+using GXPEngine;                                // GXPEngine contains the engine
+using GXPEngine.Objects;
+using GXPEngine.Objects.Handlers;
+using GXPEngine.OpenGL;
 
 public class MyGame : Game
 {
-	public MyGame() : base(800, 600, false)		// Create a window that's 800x600 and NOT fullscreen
+	public static MyGame Instance;
+    public static bool drawCollision = false;       //Debug draw collision?
+
+    BeatmapHandler beatmapHandler;
+
+    public MyGame() : base(1920, 1080, false, false, 1920, 1080, false)		// Create a window that's 800x600 and NOT fullscreen
 	{
-        //----------------------------------------------------example-code----------------------------
-        //create a canvas
-        Canvas canvas = new Canvas(800, 600);
+		Instance = this;
+		targetFps = 500;
+        GL.ClearColor(0.5f, 0.5f, 0.5f, 1);
 
-        //add some content
-        canvas.graphics.FillRectangle(new SolidBrush(Color.Red), new Rectangle(0, 0, 400, 300));
-        canvas.graphics.FillRectangle(new SolidBrush(Color.Blue), new Rectangle(400, 0, 400, 300));
-        canvas.graphics.FillRectangle(new SolidBrush(Color.Yellow), new Rectangle(0, 300, 400, 300));
-        canvas.graphics.FillRectangle(new SolidBrush(Color.Gray), new Rectangle(400, 300, 400, 300));
+        beatmapHandler = new BeatmapHandler();
+        AddChild(beatmapHandler);
+    }
 
-        //add canvas to display list
-        AddChild(canvas);
-        //------------------------------------------------end-of-example-code-------------------------
+
+   
+
+    float counter = 0;
+
+    void StartBeatMap(string name)
+    {
+        beatmapHandler?.Stop();
+        beatmapHandler?.SpawnBeatmap(name);
+        Thread.Sleep(10);
+        beatmapHandler?.Play();
     }
 
     void Update()
 	{
-		//----------------------------------------------------example-code----------------------------
-		if (Input.GetKeyDown(Key.SPACE)) // When space is pressed...
-		{
-			new Sound("ping.wav").Play(); // ...play a sound
-		}
-		//------------------------------------------------end-of-example-code-------------------------
-	}
+        counter += Time.deltaTime;
+
+        
+
+        if (Input.GetKeyDown(Key.P)){
+            OsuToBeatConverter.ConvertFile(4);
+        }
+
+        if(counter >= 1)
+        {
+            counter = 0;
+            Debug.WriteLine(currentFps);
+        }
+       
+        if (Input.GetKeyDown(Key.ONE))
+        {
+            StartBeatMap("Songs/Song1/beatmap.txt");
+        }
+
+        if (Input.GetKeyDown(Key.TWO))
+        {
+            StartBeatMap("Songs/Song2/beatmap.txt");
+        }
+
+        if (Input.GetKeyDown(Key.THREE))
+        {
+            StartBeatMap("Songs/Song3/beatmap.txt");
+        }
+
+        if (Input.GetKeyDown(Key.FOUR))
+        {
+            StartBeatMap("Songs/Song4/beatmap.txt");
+        }
+
+        if (Input.GetKeyDown(Key.Y))
+        {
+            beatmapHandler?.Stop();
+            
+        }
+
+        if (Input.GetKeyDown(Key.C))
+        {
+            drawCollision = !drawCollision;
+        }
+
+       
+    }
 
 	static void Main()							// Main() is the first method that's called when the program is run
 	{
