@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static GXPEngine.AddOns.KeyboardHook;
 
 namespace GXPEngine.Objects
 {
@@ -15,11 +16,18 @@ namespace GXPEngine.Objects
 
         public EasyDraw easyDraw;
 
-        int myKey;
+        VKeys myKey;
 
-        public Footer(int key)
+        LaneObject laneObject;
+
+        public Footer(VKeys key, LaneObject laneObject)
         {
             myKey = key;
+
+            this.laneObject = laneObject;
+            laneObject.keyboardHook.KeyDown += new KeyboardHookCallback(OnKeyDown);
+            laneObject.keyboardHook.KeyUp += new KeyboardHookCallback(OnKeyUp);
+
             footerDead = new Bitmap("Note.png");
             footerAlive = new Bitmap("NoteHit.png");
             easyDraw = new EasyDraw(footerDead.Width, footerDead.Height, false);
@@ -50,31 +58,46 @@ namespace GXPEngine.Objects
 
         void DrawKey()
         {
-            easyDraw.Text(Key.Name(myKey), footerDead.Width / 2, footerDead.Height / 2);
+            try
+            {
+                easyDraw.Text(myKey.ToString().Split('_')[1], footerDead.Width / 2, footerDead.Height / 2);
+            }
+            catch
+            {
+                easyDraw.Text(myKey.ToString(), footerDead.Width / 2, footerDead.Height / 2);
+            }
         }
+
+        protected override void OnDestroy()
+        {
+
+        }
+
+        public void OnKeyUp(VKeys key)
+        {
+            if (key == myKey)
+            {
+                shouldCount = true;
+                stayOnTime = 0.04f;
+            }
+        }
+        public void OnKeyDown(VKeys key)
+        {
+            if(key == myKey)
+            {
+                DrawAlive();
+                shouldCount = false;
+                stayOnTime = 0;
+            }
+        }
+
+
 
         float stayOnTime = 0;
         bool shouldCount = false;
 
         void Update()
         {
-            if (Input.GetKeyDown(myKey))
-            {
-                DrawAlive();
-            }
-
-            if (Input.GetKey(myKey))
-            {
-                shouldCount = false;
-                stayOnTime = 0;
-            }
-
-            if (Input.GetKeyUp(myKey))
-            {
-                
-                shouldCount = true;
-                stayOnTime = 0.05f;
-            }
 
             if(stayOnTime >= 0 && shouldCount)
             {
