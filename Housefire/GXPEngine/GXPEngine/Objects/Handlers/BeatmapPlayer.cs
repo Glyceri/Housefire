@@ -8,56 +8,78 @@ namespace GXPEngine.Objects.Handlers
 {
     public class BeatmapPlayer
     {
-
-        Beatmap activeBeatmap;
         BeatmapHandler beatmapHandler;
-        List<Note> activeNotes = new List<Note>();
-        List<TimingPoint> timingPoints = new List<TimingPoint>();
 
-        public int beatmapTimer = 0;
+        public List<Note> notes;
+        public List<TimingPoint> points;
 
-        List<LaneObject> laneObjects;
+        public List<Note> notesInQueue = new List<Note>();
 
-        public void SetupBeatmap(BeatmapHandler beatmapHandler, List<LaneObject> laneObjects)
+       
+
+        public BeatmapPlayer(BeatmapHandler beatmapHandler)
         {
-            this.laneObjects = laneObjects;
             this.beatmapHandler = beatmapHandler;
-            activeBeatmap = BeatmapHandler.activeBeatmap;
-            activeNotes = new List<Note>(activeBeatmap.notes);
-            timingPoints = new List<TimingPoint>(activeBeatmap.points);
-            beatmapTimer = 0;
         }
 
 
-        public void Update()
+        public void Tick()
         {
-            if (!BeatmapHandler.isPlaying) return;
-            beatmapTimer += Time.deltaTimeMiliseconds;
-            HandleNoteSpawn();
+            HandleNodeSpawn();
         }
 
-        void HandleNoteSpawn()
+        void HandleNodeSpawn()
         {
-            
-            for(int i = activeNotes.Count - 1; i >= 0; i--)
+
+            for (int i = notes.Count - 1; i >= 0; i--)
             {
-                if (beatmapTimer >= (activeNotes[i].hitTime - ((60000/BeatmapHandler.activeBeatmap.BPM) * 2)))
-                //if (beatmapTimer >= (activeNotes[i].hitTime))
+                if (beatmapHandler.infiniteBeatmapTimer + ((1000 / beatmapHandler.BPM_calc) * 1000) + beatmapHandler.activeBeatmap.offset >= notes[i].hitTime)
                 {
-                    foreach(LaneObject lane in laneObjects)
+                    foreach (LaneObject lane in beatmapHandler.lanes)
                     {
-                        lane.SpawnNote(activeNotes[i]);
+                        if (notes[i].length > 0)
+                        {
+                            lane.SpawnNote(notes[i]);
+                            lane.SpawnNote(new Note(notes[i].lane, notes[i].hitTime, -1), "NoteOpenTop.png");
+                            notesInQueue.Add(new Note(notes[i].lane, notes[i].hitTime + notes[i].length, -1));
+                        }
+                        else
+                        {
+                            lane.SpawnNote(notes[i]);
+                        }
                     }
-                    activeNotes.RemoveAt(i);
+                    notes.RemoveAt(i);
+                }
+            }
+
+            for (int i = notesInQueue.Count - 1; i >= 0; i--)
+            {
+                if (beatmapHandler.infiniteBeatmapTimer + ((1000 / beatmapHandler.BPM_calc) * 1000) + beatmapHandler.activeBeatmap.offset >= notesInQueue[i].hitTime)
+                {
+                    foreach (LaneObject lane in beatmapHandler.lanes)
+                    {
+                        lane.SpawnNote(notesInQueue[i], "NoteOpenBot.png");
+                    }
+                    notesInQueue.RemoveAt(i);
+                }
+            }
+
+            if(notes.Count <= 0 && notesInQueue.Count <= 0)
+            {
+                endingTimer += Time.deltaTime;
+                if(endingTimer >= 2f)
+                {
+                    MyGame.Instance.oldSong = beatmapHandler.Stop(true);
                 }
             }
         }
 
+        float endingTimer = 0;
 
         public void Stop()
         {
-            beatmapTimer = 0;
+            notes?.Clear();
+            points?.Clear();
         }
-
     }
 }

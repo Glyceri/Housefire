@@ -18,6 +18,8 @@ namespace GXPEngine
         private IntPtr _id;
         private SoundSystem _system;
 
+		public string fileName;
+
         /// <summary>
         /// Creates a new <see cref="GXPEngine.Sound"/>.
         /// This class represents a sound file.
@@ -38,6 +40,7 @@ namespace GXPEngine
         /// </param>
         public Sound(string filename, bool looping = false, bool streaming = false)
 		{
+			this.fileName = filename;
             _system = GLContext.soundSystem;
 
             if (streaming) {
@@ -105,7 +108,7 @@ namespace GXPEngine
 
 		public void Stop()
         {
-			soundChannel.Stop();
+			soundChannel?.Stop();
 			
         }
 	}

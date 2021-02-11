@@ -5,6 +5,7 @@ using System.Threading;
 using GXPEngine;                                // GXPEngine contains the engine
 using GXPEngine.Objects;
 using GXPEngine.Objects.Handlers;
+using GXPEngine.Objects.Scenes;
 using GXPEngine.OpenGL;
 
 public class MyGame : Game
@@ -12,39 +13,53 @@ public class MyGame : Game
 	public static MyGame Instance;
     public static bool drawCollision = false;       //Debug draw collision?
 
-    BeatmapHandler beatmapHandler;
-
     public MyGame() : base(1920, 1080, false, false, 1920, 1080, false)		// Create a window that's 800x600 and NOT fullscreen
 	{
 		Instance = this;
-		targetFps = 500;
+		targetFps = 1000;
         GL.ClearColor(0.5f, 0.5f, 0.5f, 1);
-
-        beatmapHandler = new BeatmapHandler();
-        AddChild(beatmapHandler);
+        MenuScreen menuScreen = new MenuScreen();
+        AddChild(menuScreen);
     }
 
-
-   
-
     float counter = 0;
+    BeatmapHandler beatmapHandler;
+    public Sound oldSong = null;
 
-    void StartBeatMap(string name)
+    public void StartBeatMap(string name)
     {
+        oldSong?.Stop();
+        oldSong = null;
         beatmapHandler?.Stop();
-        beatmapHandler?.SpawnBeatmap(name);
-        Thread.Sleep(10);
+        beatmapHandler = new BeatmapHandler(name);
+        beatmapHandler.activeBeatmap?.WriteDebug();
+        beatmapHandler?.Play();
+    }
+
+    public void StartBeatMap(Beatmap beatmap)
+    {
+        oldSong?.Stop();
+        oldSong = null;
+        beatmapHandler?.Stop();
+        beatmapHandler = new BeatmapHandler(beatmap);
+        beatmapHandler.activeBeatmap?.WriteDebug();
         beatmapHandler?.Play();
     }
 
     void Update()
 	{
+        //Console.WriteLine(width);
+        //Console.WriteLine(actualWidth);
         counter += Time.deltaTime;
 
+        if (Input.GetKeyDown(Key.ENTER))
+        {
+            beatmapHandler?.Play();
+        }
         
 
         if (Input.GetKeyDown(Key.P)){
-            OsuToBeatConverter.ConvertFile(4);
+            OsuToBeatConverter.ConvertFile(7);
         }
 
         if(counter >= 1)
@@ -52,37 +67,24 @@ public class MyGame : Game
             counter = 0;
             Debug.WriteLine(currentFps);
         }
-       
-        if (Input.GetKeyDown(Key.ONE))
-        {
-            StartBeatMap("Songs/Song1/beatmap.txt");
-        }
-
-        if (Input.GetKeyDown(Key.TWO))
-        {
-            StartBeatMap("Songs/Song2/beatmap.txt");
-        }
-
-        if (Input.GetKeyDown(Key.THREE))
-        {
-            StartBeatMap("Songs/Song3/beatmap.txt");
-        }
-
-        if (Input.GetKeyDown(Key.FOUR))
-        {
-            StartBeatMap("Songs/Song4/beatmap.txt");
-        }
 
         if (Input.GetKeyDown(Key.Y))
         {
+            oldSong = beatmapHandler?.Stop(true);
+
+        }
+
+        if (Input.GetKeyDown(Key.U))
+        {
             beatmapHandler?.Stop();
-            
         }
 
         if (Input.GetKeyDown(Key.C))
         {
             drawCollision = !drawCollision;
         }
+
+        beatmapHandler?.Update();
 
        
     }

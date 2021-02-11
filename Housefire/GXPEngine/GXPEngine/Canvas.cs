@@ -94,6 +94,22 @@ namespace GXPEngine
 			graphics.DrawImage(sprite.texture.bitmap, destPoints);
 		}
 
+		public void DrawSprite(Sprite sprite, bool offset)
+        {
+            if (offset)
+            {
+				DrawSprite(sprite);
+				return;
+            }
+			Vector2 p0 = sprite.TransformPoint(0, 0);
+			Vector2 p1 = sprite.TransformPoint(sprite.texture.width, 0);
+			Vector2 p2 = sprite.TransformPoint(0, sprite.texture.height);
+			destPoints[0] = new PointF(p0.x, p0.y);
+			destPoints[1] = new PointF(p1.x, p1.y);
+			destPoints[2] = new PointF(p2.x, p2.y);
+			graphics.DrawImage(sprite.texture.bitmap, destPoints);
+		}
+
 		public void DrawSprite(Bitmap bitmap)
         {
 			graphics.DrawImage(bitmap, 0, 0);
@@ -103,6 +119,12 @@ namespace GXPEngine
 		{
 			graphics.DrawImage(bitmap, (float)(xOffset * bitmap.Width * 0.5f), (float)(yOffset * bitmap.Height));
 			if(repeat) graphics.DrawImage(bitmap, (float)((xOffset == 0 ? 0 : (xOffset * bitmap.Width) - bitmap.Width) *0.5f), (float)(yOffset == 0 ? 0 : (yOffset * bitmap.Height) - bitmap.Height));
+		}
+
+		public void DrawSprite(Bitmap bitmap, Vector2 scale, double xOffset = 0, double yOffset = 0, bool repeat = false)
+		{
+			graphics.DrawImage(bitmap, (float)(xOffset * bitmap.Width * 0.5f), (float)(yOffset * bitmap.Height), bitmap.Width * scale.x, bitmap.Height * scale.y);
+			if (repeat) graphics.DrawImage(bitmap, (float)((xOffset == 0 ? 0 : (xOffset * bitmap.Width) - bitmap.Width) * 0.5f), (float)(yOffset == 0 ? 0 : (yOffset * bitmap.Height) - bitmap.Height));
 		}
 
 

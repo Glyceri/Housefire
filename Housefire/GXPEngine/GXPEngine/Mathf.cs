@@ -244,6 +244,11 @@ namespace GXPEngine
             return f < min ? min : (f > max ? max : f);
         }
 
+        public static float Map(float value, float fromLow, float fromHigh, float toLow, float toHigh)
+        {
+            return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
+        }
+
     }
 }
 

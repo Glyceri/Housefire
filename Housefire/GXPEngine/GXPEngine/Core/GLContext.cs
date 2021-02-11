@@ -12,6 +12,12 @@ namespace GXPEngine.Core
         public int width, height;
     }
 
+    class ActualWindowSize
+    {
+        public static ActualWindowSize instance = new ActualWindowSize();
+        public int width, height;
+    }
+
     public class GLContext
     {
 
@@ -69,6 +75,16 @@ namespace GXPEngine.Core
             get { return WindowSize.instance.height; }
         }
 
+        public int actualWidth
+        {
+            get { return ActualWindowSize.instance.width; }
+        }
+
+        public int actualHeight
+        {
+            get { return ActualWindowSize.instance.height; }
+        }
+
         //------------------------------------------------------------------------------------------------------------------------
         //														SoundSystem
         //------------------------------------------------------------------------------------------------------------------------
@@ -92,6 +108,8 @@ namespace GXPEngine.Core
             // This stores the "logical" width, used by all the game logic:
             WindowSize.instance.width = width;
             WindowSize.instance.height = height;
+            ActualWindowSize.instance.width = realWidth;
+            ActualWindowSize.instance.height = realHeight;
             lastRealWidth = realWidth;
             lastRealHeight = realHeight;
             _realToLogicWidthRatio = (double)realWidth / width;
@@ -123,7 +141,8 @@ namespace GXPEngine.Core
                     buttons[_button] = press;
                 });
 
-            GL.glfwSetWindowSizeCallback((int newWidth, int newHeight) => { 
+            GL.glfwSetWindowSizeCallback((int newWidth, int newHeight) => {
+               
                 GL.Viewport(0, 0, newWidth, newHeight);
                 GL.glfwOpenWindowHint(GL.GLFW_FSAA_SAMPLES, 4);
                 GL.Enable(GL.MULTISAMPLE);
@@ -139,9 +158,11 @@ namespace GXPEngine.Core
                 GL.MatrixMode(GL.PROJECTION);
                 GL.LoadIdentity();
 
-                
-                    _realToLogicWidthRatio = lastRealWidth / (double)newWidth;
-                    _realToLogicHeightRatio = lastRealHeight / (double)newHeight;
+                _realToLogicWidthRatio = lastRealWidth / (double)newWidth;
+                _realToLogicHeightRatio = lastRealHeight / (double)newHeight;
+
+                ActualWindowSize.instance.width = newWidth;
+                ActualWindowSize.instance.height = newHeight;
               
                 // Here's where the conversion from logical width/height to real width/height happens: 
                 GL.Ortho(0.0f, (float)newWidth * _realToLogicWidthRatio, (float)newHeight * _realToLogicHeightRatio, 0.0f, 0.0f, 1000.0f);

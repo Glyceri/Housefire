@@ -48,6 +48,11 @@ namespace GXPEngine
 				_renderRange = value;
 			}
 		}
+		
+		public GLContext glContext
+        {
+			get => _glContext;
+        }
 
 		/// <summary>
 		/// Set this to false if you *only* want to render using your own cameras.
@@ -258,6 +263,17 @@ namespace GXPEngine
 		public int height {
 			get { return _glContext.height; }
 		}
+
+		public int actualWidth
+        {
+			get { return _glContext.actualWidth; }
+        }
+
+		public int actualHeight
+		{
+			get { return _glContext.actualHeight; }
+		}
+
 
 		//------------------------------------------------------------------------------------------------------------------------
 		//														Destroy()

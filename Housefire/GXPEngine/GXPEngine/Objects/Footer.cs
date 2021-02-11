@@ -22,7 +22,7 @@ namespace GXPEngine.Objects
             myKey = key;
             footerDead = new Bitmap("Note.png");
             footerAlive = new Bitmap("NoteHit.png");
-            easyDraw = new EasyDraw(footerDead.Width, footerDead.Height);
+            easyDraw = new EasyDraw(footerDead.Width, footerDead.Height, false);
             easyDraw.TextSize(20);
             easyDraw.TextAlign(CenterMode.Center, CenterMode.Center);
 

@@ -13,10 +13,12 @@ namespace GXPEngine.Objects
         Sprite debugOrigin;
 
         Sprite header;
-        List<Lane> lanes = new List<Lane>();
+        public List<Lane> lanes = new List<Lane>();
         List<Footer> footers = new List<Footer>();
 
         public bool flipped = false;
+
+        BeatmapHandler beatmapHandler;
 
         /// <summary>
         /// Spawn a lane object that will handle inputs and spawning of notes and all that jazz.
@@ -24,8 +26,9 @@ namespace GXPEngine.Objects
         /// <param name="laneCount">Amount of lanes in this object</param>
         /// <param name="rotation">rotation of this object</param>
         /// <param name="bpm">beats per minute of this song</param>
-        public LaneObject(int laneCount, int[] keyRegisters, bool flip = false)
+        public LaneObject(BeatmapHandler beatmapHandler, int laneCount, int[] keyRegisters, bool flip = false)
         {
+            this.beatmapHandler = beatmapHandler;
             flipped = flip;
             if (laneCount <= 0) laneCount = 1;
 
@@ -34,7 +37,14 @@ namespace GXPEngine.Objects
             for (int i = 0; i < laneCount; i++)
             {
                 AddLane(laneCount, i, flip);
-                AddFooter(laneCount, i, keyRegisters[i], flip);
+                try
+                {
+                    AddFooter(laneCount, i, keyRegisters[i], flip);
+                }
+                catch
+                {
+                    AddFooter(laneCount, i, Key.ZERO, flip);
+                }
             }
             AddHeader(laneCount);
             AddChild(debugOrigin);
@@ -59,13 +69,13 @@ namespace GXPEngine.Objects
             
             if(i == 0)
             {
-                lanes.Add(new Lane("Lane2.png"));
+                lanes.Add(new Lane(beatmapHandler, this, "Lane2.png"));
             }else if(i == 2)
             {
-                lanes.Add(new Lane("Lane3.png"));
+                lanes.Add(new Lane(beatmapHandler, this, "Lane3.png"));
             }else
             {
-                lanes.Add(new Lane());
+                lanes.Add(new Lane(beatmapHandler, this));
             }
             AddChild(lanes[i]);
             int laneWidth = lanes[i].lane.Width;
@@ -83,23 +93,29 @@ namespace GXPEngine.Objects
             AddChild(footers[i]); 
         }
 
-        void Update()
+        public void Tick()
         {
+            foreach(Lane lane in lanes)
+            {
+                lane.LaneUpdate();
+            }
+
             for(int i = 0; i < footers.Count; i++)
             {
                 footers[i].easyDraw.Mirror(rotation > 0 && rotation < 180, rotation > 0 && rotation < 180);
             }
         }
 
-        public void SpawnNote(Note note)
+        public void SpawnNote(Note note, string noteImg = "Note.png")
         {
+            //Console.WriteLine("Spawning note: " + note.lane + " ,Time: " + note.hitTime + " ,Length: " + note.length);
             if (flipped)
             {
-                lanes[lanes.Count - note.lane - 1].SpawnNode();
+                lanes[lanes.Count - note.lane - 1].SpawnNode(note.length, noteImg);
             }
             else
             {
-                lanes[note.lane].SpawnNode();
+                lanes[note.lane].SpawnNode(note.length, noteImg);
             }
         }
 

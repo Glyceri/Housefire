@@ -32,6 +32,7 @@ namespace GXPEngine
 		public Vector2 position
 		{
 			get { return new Vector2(x, y); }
+			set { SetXY(value); }
 		}
 
 

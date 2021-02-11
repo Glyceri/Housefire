@@ -16,9 +16,24 @@ namespace GXPEngine.Objects.Handlers
         public int lanes = -1;
         public Bitmap background;
         public int BPM = -1;
+        public int offset = 0;
+        public string name = "Song!";
 
         bool noteMode = false;
         bool timingMode = false;
+
+        public Beatmap(Beatmap beatmap)
+        {
+            notes = new List<Note>(beatmap.notes);
+            points = new List<TimingPoint>(beatmap.points);
+            music = new Sound(beatmap.music.fileName);
+            lanes = beatmap.lanes;
+            background = new Bitmap(beatmap.background);
+            BPM = beatmap.BPM;
+            offset = beatmap.offset;
+            name = beatmap.name;
+
+        }
 
         public Beatmap(string beatmapFile)
         {
@@ -40,12 +55,14 @@ namespace GXPEngine.Objects.Handlers
 
                         if (!noteMode && !timingMode)
                         {
-                            if (line.Contains(failedValue = "bpm=")) BPM = int.Parse(line.Split('=')[1]);
-                            if (line.Contains(failedValue = "music=")) music = new Sound(beatmapFile + @"\..\" + line.Split('=')[1]);
-                            if (line.Contains(failedValue = "lanes=")) lanes = int.Parse(line.Split('=')[1]);
-                            if (line.Contains(failedValue = "background=")) background = new Bitmap(beatmapFile + @"\..\" + line.Split('=')[1]);
-                            if (line.Contains(failedValue = "beatmap")) { noteMode = true; timingMode = false; }
-                            if (line.Contains(failedValue = "timingPoints")) {timingMode = true; noteMode = false; }
+                                 if (line.Contains(failedValue = "bpm="))           BPM = int.Parse(line.Split('=')[1]);
+                            else if (line.Contains(failedValue = "music="))         music = new Sound(beatmapFile + @"\..\" + line.Split('=')[1]);
+                            else if (line.Contains(failedValue = "lanes="))         lanes = int.Parse(line.Split('=')[1]);
+                            else if (line.Contains(failedValue = "background="))    background = new Bitmap(beatmapFile + @"\..\" + line.Split('=')[1]);
+                            else if (line.Contains(failedValue = "beatmap")) {      noteMode = true; timingMode = false; }
+                            else if (line.Contains(failedValue = "timingPoints")) { timingMode = true; noteMode = false; }
+                            else if (line.Contains(failedValue = "offset"))         offset = int.Parse(line.Split('=')[1]);
+                            else if (line.Contains(failedValue = "name"))           name = line.Split('=')[1]; 
                         }
                         else if(noteMode)
                         {
@@ -61,7 +78,7 @@ namespace GXPEngine.Objects.Handlers
                                 
                                 note.lane = int.Parse(csl[0]);
                                 note.hitTime = csl[1].Contains("-") ? -1 : int.Parse(csl[1]);
-                                note.length = csl[2].Contains("-") ? -1 : int.Parse(csl[2]);
+                                note.length = csl[2].Contains("-") ? -1 : int.Parse(csl[2]) - note.hitTime;
                                 notes.Add(note);
                             }
                             catch
@@ -125,16 +142,26 @@ namespace GXPEngine.Objects.Handlers
                 }
             }
         }
-        
-        public void Dispose()
+
+        public Sound Dispose(bool keepMusicGoing)
         {
             background?.Dispose();
             background = null;
-            music?.Dispose();
-            music = null;
+            if (!keepMusicGoing)
+            {
+                music?.Dispose();
+                music = null;
+                return null;
+            }
             notes?.Clear();
-            lanes = -1;
-            BPM = -1;
+            lanes = 0;
+            BPM = 0;
+            return music;
+        }
+        
+        public void Dispose()
+        {
+            Dispose(false);
         }
     }
 }

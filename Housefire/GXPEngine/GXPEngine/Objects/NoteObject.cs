@@ -9,11 +9,18 @@ namespace GXPEngine.Objects
     public class NoteObject : Sprite
     {
         public int personalCounter = 0;
+        public int length;
+    
 
-        public NoteObject() : base("Note.png", true, false)
+        public NoteObject(int length, string customNote = "Note.png") : base(length > 0 ? "NoteLong.png" : customNote, true, false)
         {
-            scaleY = 0.4f;
+            this.length = length;
+            scaleY = 0.3f;
+            
+            if (length > 0)
+            {
+                height = -(int)(Lane.laneSize * ((float)length / 1000));
+            }
         }
-
     }
 }
