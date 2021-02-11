@@ -230,6 +230,11 @@ namespace GXPEngine
 			}
 		}
 
+		public void Line(Vector2 pos1, Vector2 pos2)
+        {
+			Line(pos1.x, pos1.y, pos2.x, pos2.y);
+        }
+
 		public void Line(float x1, float y1, float x2, float y2) {
 			if (_stroke) {
 				graphics.DrawLine (pen, x1, y1, x2, y2);
