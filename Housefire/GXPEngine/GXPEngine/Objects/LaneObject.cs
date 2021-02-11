@@ -1,10 +1,12 @@
-﻿using GXPEngine.Objects.Handlers;
+﻿using GXPEngine.AddOns;
+using GXPEngine.Objects.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static GXPEngine.AddOns.KeyboardHook;
 
 namespace GXPEngine.Objects
 {
@@ -20,15 +22,23 @@ namespace GXPEngine.Objects
 
         BeatmapHandler beatmapHandler;
 
+        public KeyboardHook keyboardHook;
+        public BeatmapScoring beatmapScoring;
+
+
         /// <summary>
         /// Spawn a lane object that will handle inputs and spawning of notes and all that jazz.
         /// </summary>
         /// <param name="laneCount">Amount of lanes in this object</param>
         /// <param name="rotation">rotation of this object</param>
         /// <param name="bpm">beats per minute of this song</param>
-        public LaneObject(BeatmapHandler beatmapHandler, int laneCount, int[] keyRegisters, bool flip = false)
+        public LaneObject(BeatmapHandler beatmapHandler, int laneCount, VKeys[] keyRegisters, bool flip = false)
         {
             this.beatmapHandler = beatmapHandler;
+            keyboardHook = new KeyboardHook();
+            
+            keyboardHook.Install();
+
             flipped = flip;
             if (laneCount <= 0) laneCount = 1;
 
@@ -43,11 +53,13 @@ namespace GXPEngine.Objects
                 }
                 catch
                 {
-                    AddFooter(laneCount, i, Key.ZERO, flip);
+                    AddFooter(laneCount, i, VKeys.NONAME, flip);
                 }
             }
             AddHeader(laneCount);
             AddChild(debugOrigin);
+
+            beatmapScoring = new BeatmapScoring(beatmapHandler, this, keyRegisters);
         }
 
         void AddDebugOrigin()
@@ -83,9 +95,9 @@ namespace GXPEngine.Objects
             else lanes[i].SetXY(((laneWidth / 2) * laneCount) - ((i + 1) * laneWidth), 0);
         }
 
-        void AddFooter(int laneCount, int i, int key, bool flip)
+        void AddFooter(int laneCount, int i, VKeys key, bool flip)
         {
-            footers.Add(new Footer(key));
+            footers.Add(new Footer(key, this));
             
             float footerWidth = footers[i].footerDead.Width;
             if(!flip) footers[i].SetXY(((i * footerWidth) - ((footerWidth / 2) * laneCount) + (footerWidth / 2)) * lanes[i].scaleX, (lanes[i].lane.Height * lanes[i].scaleY) + (footerWidth / 2));
@@ -104,6 +116,8 @@ namespace GXPEngine.Objects
             {
                 footers[i].easyDraw.Mirror(rotation > 0 && rotation < 180, rotation > 0 && rotation < 180);
             }
+
+            beatmapScoring.CheckForHits();
         }
 
         public void SpawnNote(Note note, string noteImg = "Note.png")
@@ -122,6 +136,7 @@ namespace GXPEngine.Objects
 
         protected override void OnDestroy()
         {
+            keyboardHook?.Uninstall();
             lanes.Clear();
             footers.Clear();
         }

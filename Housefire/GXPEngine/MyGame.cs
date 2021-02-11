@@ -48,18 +48,15 @@ public class MyGame : Game
 
     void Update()
 	{
-        //Console.WriteLine(width);
-        //Console.WriteLine(actualWidth);
         counter += Time.deltaTime;
 
         if (Input.GetKeyDown(Key.ENTER))
         {
             beatmapHandler?.Play();
         }
-        
 
         if (Input.GetKeyDown(Key.P)){
-            OsuToBeatConverter.ConvertFile(7);
+            OsuToBeatConverter.ConvertFile(4);
         }
 
         if(counter >= 1)

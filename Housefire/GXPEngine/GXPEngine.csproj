@@ -50,12 +50,17 @@
     <Compile Include="GXPEngine\AddOns\KeyboardHook.cs" />
     <Compile Include="GXPEngine\AddOns\MouseHook.cs" />
     <Compile Include="GXPEngine\AddOns\TiledLoader.cs" />
+    <Compile Include="GXPEngine\Objects\Enums\HitWindow.cs" />
     <Compile Include="GXPEngine\Objects\Footer.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\Beatmap.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\BeatmapHandler.cs" />
     <Compile Include="GXPEngine\Graveyard\BeatmapHandlerOld.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\BeatmapPlayer.cs" />
     <Compile Include="GXPEngine\Graveyard\BeatmapPlayerOld.cs" />
+    <Compile Include="GXPEngine\Objects\Handlers\BeatmapScoring.cs" />
+    <Compile Include="GXPEngine\Objects\Handlers\BeatScore.cs" />
+    <Compile Include="GXPEngine\Objects\Handlers\Data\CheckingData.cs" />
+    <Compile Include="GXPEngine\Objects\Handlers\Data\CheckingNote.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\Note.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\OsuToBeatConverter.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\TimingPoint.cs" />
