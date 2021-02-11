@@ -130,6 +130,11 @@ public class Gizmos
 		DrawLine(x, y - radius, x, y + radius, space, color, width);
 	}
 
+	public static void DrawPlus(Vector2 pos, float radius)
+    {
+		DrawPlus(pos.x, pos.y, radius);
+    }
+
 	/// <summary>
 	/// Draws a cross shape centered at the point x,y, with given radius, using DrawLine.
 	/// </summary>
@@ -181,6 +186,11 @@ public class Gizmos
 		DrawArrow(x, y, dx, dy, relativeArrowSize, space, color, width);
 	}
 
+	public static void DrawRectangle(Vector2 pos, Vector2 scale)
+    {
+		DrawRectangle(pos.x, pos.y, scale.x, scale.y);
+    } 
+
 	/// <summary>
 	/// Draws an axis-aligned rectangle centered at a given point, with given width and height,
 	/// using DrawLine.
@@ -218,6 +228,7 @@ public class Gizmos
 		GL.DisableClientState(GL.VERTEX_ARRAY);
 		GL.Enable(GL.TEXTURE_2D);
 	}
+
 
 	void DrawLines(GLContext glContext)
 	{
