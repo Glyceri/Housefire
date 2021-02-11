@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static GXPEngine.AddOns.KeyboardHook;
 
 namespace GXPEngine.Objects.Handlers
 {
     public class BeatmapHandler
     {
-        List<int[]> keysPerLanecount = new List<int[]>() { new int[1] { Key.SPACE }, new int[2] { Key.F, Key.J }, new int[3] { Key.F, Key.SPACE, Key.J }, new int[4] { Key.D, Key.F, Key.J, Key.K }, new int[5] { Key.D, Key.F, Key.SPACE, Key.J, Key.K }, new int[6] { Key.S, Key.D, Key.F, Key.J, Key.K, Key.L }, new int[7] { Key.S, Key.D, Key.F, Key.SPACE, Key.J, Key.K, Key.L } };
+        public static int beatOffset = -30;
+
+        List<VKeys[]> keysPerLanecount = new List<VKeys[]>() { new VKeys[1] { VKeys.SPACE }, new VKeys[2] { VKeys.KEY_F, VKeys.KEY_J }, new VKeys[3] { VKeys.KEY_F, VKeys.SPACE, VKeys.KEY_J }, new VKeys[4] { VKeys.KEY_D, VKeys.KEY_F, VKeys.KEY_J, VKeys.KEY_K }, new VKeys[5] { VKeys.KEY_D, VKeys.KEY_F, VKeys.SPACE, VKeys.KEY_J, VKeys.KEY_K }, new VKeys[6] { VKeys.KEY_S, VKeys.KEY_D, VKeys.KEY_F, VKeys.KEY_J, VKeys.KEY_K, VKeys.KEY_L }, new VKeys[7] { VKeys.KEY_S, VKeys.KEY_D, VKeys.KEY_F, VKeys.SPACE, VKeys.KEY_J, VKeys.KEY_K, VKeys.KEY_L } };
 
         Sprite background;
 
@@ -18,6 +21,7 @@ namespace GXPEngine.Objects.Handlers
         public double BPM_calc = 0;
         public int oneSecondTimer = 0;
         public int infiniteBeatmapTimer = -1000;
+
 
         BeatmapPlayer beatmapPlayer;
 
@@ -108,7 +112,6 @@ namespace GXPEngine.Objects.Handlers
         {
             beatmapPlayer.Tick();
             foreach (LaneObject lane in lanes) lane.Tick();
-
         }
 
 
