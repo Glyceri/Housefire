@@ -15,7 +15,9 @@ namespace GXPEngine.Objects
         {
             collider = new BoxCollider(Vector2.Zero, new Vector2(200, 100), this);
             collider.isTrigger = true;
-            DrawSprite(image, new Vector2(200 / (float)image.Width, 100 / (float)image.Height),0,0,false);
+            if (image == null) return;
+            DrawSprite(image, new Vector2(200 / (float)image.Width, 100 / (float)image.Height), 0, 0, false);
+            
             
         }
 

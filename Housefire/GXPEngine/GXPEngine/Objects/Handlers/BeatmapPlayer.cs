@@ -11,7 +11,6 @@ namespace GXPEngine.Objects.Handlers
         BeatmapHandler beatmapHandler;
 
         public List<Note> notes;
-        public List<TimingPoint> points;
 
         public List<Note> notesInQueue = new List<Note>();
 
@@ -79,7 +78,6 @@ namespace GXPEngine.Objects.Handlers
         public void Stop()
         {
             notes?.Clear();
-            points?.Clear();
         }
     }
 }

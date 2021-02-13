@@ -9,6 +9,7 @@ namespace GXPEngine.Objects
     {
         EasyDraw easyDraw;
         public Bitmap lane;
+        public Bitmap laneBackground;
         public float laneOffset = 0;
 
         public static float laneSize;
@@ -20,6 +21,7 @@ namespace GXPEngine.Objects
             this.beatmapHandler = beatmapHandler;
             this.laneObject = laneObject;
             lane = new Bitmap("Lane.png");
+            laneBackground = new Bitmap("LaneBackground.png");
             scale = new Vector2(1, 2f);
             easyDraw = new EasyDraw(lane.Width, lane.Height, false);
             AddChild(easyDraw);
@@ -30,6 +32,7 @@ namespace GXPEngine.Objects
             this.beatmapHandler = beatmapHandler;
             this.laneObject = laneObject;
             lane = new Bitmap(customLane);
+            laneBackground = new Bitmap("LaneBackground.png");
             scale = new Vector2(1, 2f);
             easyDraw = new EasyDraw(lane.Width, lane.Height, false);
             AddChild(easyDraw);
@@ -51,7 +54,9 @@ namespace GXPEngine.Objects
         {
             double yCalcualtion = beatmapHandler.BPM_calc == 0 ? 0 : beatmapHandler.oneSecondTimer / beatmapHandler.BPM_calc;
             easyDraw.Clear(Color.Transparent);
-            easyDraw.DrawSprite(lane, 0, yCalcualtion, true);
+            //easyDraw.DrawSprite(laneBackground, 0, yCalcualtion, true);
+            easyDraw.DrawSprite(laneBackground, 0, 0, true);
+            easyDraw.DrawSprite(lane, 0, 0, true);
 
 
             Vector2 oldScale = scale;
@@ -85,6 +90,8 @@ namespace GXPEngine.Objects
         protected override void OnDestroy()
         {
             lane?.Dispose();
+            laneBackground?.Dispose();
+            laneBackground = null;
             lane = null;
             easyDraw = null;
         }

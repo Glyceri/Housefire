@@ -5,114 +5,175 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Threading;
 
 namespace GXPEngine.Objects.Handlers
 {
     public class Beatmap : IDisposable
     {
         public List<Note> notes = new List<Note>();
-        public List<TimingPoint> points = new List<TimingPoint>();
-        public Sound music;
+        //public List<TimingPoint> points = new List<TimingPoint>();
+        public Sound music = null;
+        public Bitmap background = null;
         public int lanes = -1;
-        public Bitmap background;
         public int BPM = -1;
         public int offset = 0;
         public string name = "Song!";
 
         bool noteMode = false;
-        bool timingMode = false;
 
-        public Beatmap(Beatmap beatmap)
+
+        string[] lines = new string[0];
+        string musicName = "";
+        string imageName = "";
+        public string beatmapFile = "";
+
+        public Beatmap(string beatmapFile, bool loadAll = false)
         {
-            notes = new List<Note>(beatmap.notes);
-            points = new List<TimingPoint>(beatmap.points);
-            music = new Sound(beatmap.music.fileName);
-            lanes = beatmap.lanes;
-            background = new Bitmap(beatmap.background);
-            BPM = beatmap.BPM;
-            offset = beatmap.offset;
-            name = beatmap.name;
-
+            this.beatmapFile = beatmapFile;
+            lines = File.ReadAllLines(beatmapFile);
+            ReadBasicData();
+            if (loadAll)
+            {
+                background = ReadBackground();
+                music = ReadMusic();
+                ReadNotes();
+            }
         }
 
-        public Beatmap(string beatmapFile)
+        public void WriteDebug()
+        {
+            return;
+            
+            Console.WriteLine("--------");
+            Console.WriteLine(name);
+            Console.WriteLine(BPM);
+            Console.WriteLine(lanes);
+            Console.WriteLine(musicName);
+            Console.WriteLine(imageName);
+            Console.WriteLine(offset);
+        }
+
+
+        public void ReadBasicData()
+        {
+
+            string line = "";
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string failedValue = "";
+                try
+                {
+                    line = lines[i];
+                    if (line.Contains("//")) line = line.Split('/')[0];
+                    line = line.TrimEnd(' ');
+                    if (!line.EndsWith(";")) continue;
+                    line = line.Replace(";", "");
+                    
+                    if (line.Contains(failedValue = "bpm=")) BPM = int.Parse(line.Split('=')[1]);
+                    else if (line.Contains(failedValue = "music=")) musicName = beatmapFile + @"\..\" + line.Split('=')[1];
+                    else if (line.Contains(failedValue = "lanes=")) lanes = int.Parse(line.Split('=')[1]);
+                    else if (line.Contains(failedValue = "background=")) imageName = beatmapFile + @"\..\" + line.Split('=')[1];
+                    else if (line.Contains(failedValue = "offset")) offset = int.Parse(line.Split('=')[1]);
+                    else if (line.Contains(failedValue = "name")) name = line.Split('=')[1];
+
+                }
+                catch
+                {
+                    Console.WriteLine("Loading a value failed: " + failedValue);
+                }
+            }
+        }
+
+        public Bitmap ReadBackground()
         {
             try
             {
-                string[] lines = File.ReadAllLines(beatmapFile);
-                string line = "";
-                for(int i = 0; i < lines.Length; i++)
+                return background = new Bitmap(imageName);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public Sound ReadMusic()
+        {
+            if (musicName == "") return null;
+            try
+            {
+                return new Sound(musicName);
+            }
+            catch
+            {
+                Console.WriteLine("Couldn't find music");
+                return null;
+            }
+        }
+
+        public void ReadNotes()
+        {
+            string line = "";
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string failedValue = "";
+                try
                 {
-                    string failedValue = "";
-                    try
+                    line = lines[i];
+                    if (line.Contains("//")) line = line.Split('/')[0];
+                    line = line.TrimEnd(' ');
+                    if (!line.EndsWith(";")) continue;
+                    line = line.Replace(";", "");
+
+                    if (!noteMode)
                     {
-                        line = lines[i];
-                        if(line.Contains("//")) line = line.Split('/')[0];
-                        line = line.TrimEnd(' ');
-                        if (!line.EndsWith(";")) continue;
-                        line = line.Replace(";", "");
-
-
-                        if (!noteMode && !timingMode)
-                        {
-                                 if (line.Contains(failedValue = "bpm="))           BPM = int.Parse(line.Split('=')[1]);
-                            else if (line.Contains(failedValue = "music="))         music = new Sound(beatmapFile + @"\..\" + line.Split('=')[1]);
-                            else if (line.Contains(failedValue = "lanes="))         lanes = int.Parse(line.Split('=')[1]);
-                            else if (line.Contains(failedValue = "background="))    background = new Bitmap(beatmapFile + @"\..\" + line.Split('=')[1]);
-                            else if (line.Contains(failedValue = "beatmap")) {      noteMode = true; timingMode = false; }
-                            else if (line.Contains(failedValue = "timingPoints")) { timingMode = true; noteMode = false; }
-                            else if (line.Contains(failedValue = "offset"))         offset = int.Parse(line.Split('=')[1]);
-                            else if (line.Contains(failedValue = "name"))           name = line.Split('=')[1]; 
-                        }
-                        else if(noteMode)
-                        {
-                            try
-                            {
-                                if(line == "end")
-                                {
-                                    noteMode = false;
-                                    continue;
-                                }
-                                string[] csl = line.Replace(";", "").Split(',');
-                                Note note = new Note();
-                                
-                                note.lane = int.Parse(csl[0]);
-                                note.hitTime = csl[1].Contains("-") ? -1 : int.Parse(csl[1]);
-                                note.length = csl[2].Contains("-") ? -1 : int.Parse(csl[2]) - note.hitTime;
-                                notes.Add(note);
-                            }
-                            catch
-                            {
-                                Console.WriteLine("Something in the note section went wrong: " + line);
-                            }
-                        }else if (timingMode)
-                        {
-                            try
-                            {
-
-                                if (line == "end")
-                                {
-                                    timingMode = false;
-                                    continue;
-                                }
-                                string[] csl = line.Replace(";", "").Split(',');
-                                TimingPoint tp = new TimingPoint();
-                                tp.activationTime = int.Parse(csl[0]);
-                                tp.beatLength = int.Parse(csl[1]);
-                                points.Add(tp);
-                            }
-                            catch
-                            {
-                                Console.WriteLine("Something in the timingPoints section went wrong");
-                            }
-                        }
-
+                        if (line.Contains(failedValue = "beatmap")) { noteMode = true; }
                     }
-                    catch { Console.WriteLine("Loading a value failed: " + failedValue); }
+                    else if (noteMode)
+                    {
+                        try
+                        {
+                            if (line == "end")
+                            {
+                                noteMode = false;
+                                continue;
+                            }
+                            string[] csl = line.Replace(";", "").Split(',');
+                            Note note = new Note();
+
+                            note.lane = int.Parse(csl[0]);
+                            note.hitTime = csl[1].Contains("-") ? -1 : int.Parse(csl[1]);
+                            note.length = csl[2].Contains("-") ? -1 : int.Parse(csl[2]) - note.hitTime;
+                            notes.Add(note);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Something in the note section went wrong: " + line);
+                        }
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("Loading a value failed: " + failedValue);
                 }
             }
-            catch { Console.WriteLine("File not found: " + beatmapFile); }
-            Console.WriteLine("Beatmap Read!");
+        }
+
+        public void UnloadImage()
+        {
+            background?.Dispose();
+            background = null;
+        }
+
+        public void UnloadMusic()
+        {
+            music?.Dispose();
+            music = null;
+        }
+
+        public void ClearNotes()
+        {
+            notes?.Clear();
         }
 
         public bool IsValid()
@@ -127,6 +188,7 @@ namespace GXPEngine.Objects.Handlers
 
         public void WriteDebug(bool notesToo = false)
         {
+            return;
             Console.WriteLine("BPM: " + BPM);
             Console.WriteLine("Lanes:" + lanes);
             Console.WriteLine("Background: " + background);
@@ -145,20 +207,13 @@ namespace GXPEngine.Objects.Handlers
 
         public Sound Dispose(bool keepMusicGoing)
         {
-            background?.Dispose();
-            background = null;
-            if (!keepMusicGoing)
-            {
-                music?.Dispose();
-                music = null;
-                return null;
-            }
-            notes?.Clear();
-            lanes = 0;
-            BPM = 0;
+            UnloadImage();
+            if (!keepMusicGoing) UnloadMusic();
+            ClearNotes();
+            lines = new string[0];
             return music;
         }
-        
+
         public void Dispose()
         {
             Dispose(false);

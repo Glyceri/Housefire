@@ -16,7 +16,7 @@ namespace GXPEngine
 		private GameObject _parent = null;
 		
 		public bool visible = true;
-		private bool destroyed = false;
+		public bool destroyed = false;
 
 		//------------------------------------------------------------------------------------------------------------------------
 		//														GameObject()

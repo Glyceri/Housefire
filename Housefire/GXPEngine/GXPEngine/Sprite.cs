@@ -20,6 +20,14 @@ namespace GXPEngine
 
 		public BlendMode blendMode = null;
 
+		public bool useCustomVertices = false;
+		float[] customVertices = new float[8];
+
+		public void SetCustomVertices(float left, float top, float right, float top2, float right2, float bot, float left2, float bot2)
+        {
+			customVertices = new float[8] { left, top, right * texture.width, top2, right2 * texture.width, bot * texture.height, left2, bot2 * texture.height };
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="GXPEngine.Sprite"/> class.
 		/// Specify a System.Drawing.Bitmap to use. Bitmaps will not be cached.
@@ -93,7 +101,7 @@ namespace GXPEngine
 			float bottom = _mirrorY?0.0f:1.0f;
 			_uvs = new float[8] { left, top, right, top, right, bottom, left, bottom };
 		}
-
+		
 		//------------------------------------------------------------------------------------------------------------------------
 		//														createCollider
 		//------------------------------------------------------------------------------------------------------------------------
@@ -169,7 +177,14 @@ namespace GXPEngine
 					                   (byte)((_color >> 8) & 0xFF), 
 					                   (byte)(_color & 0xFF), 
 					                   (byte)(_alpha * 0xFF));
-					glContext.DrawQuad(GetArea(), _uvs);
+					if (useCustomVertices)
+					{
+						glContext.DrawQuad(customVertices, _uvs);
+					}
+					else
+					{
+						glContext.DrawQuad(GetArea(), _uvs);
+					}
 					glContext.SetColor(1, 1, 1, 1);
 					_texture.Unbind();
 					if (blendMode != null) BlendMode.NORMAL.enable();

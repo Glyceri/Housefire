@@ -16,6 +16,7 @@ namespace GXPEngine.Objects
         {
             this.length = length;
             scaleY = 0.3f;
+            scaleX = 1f;
             
             if (length > 0)
             {

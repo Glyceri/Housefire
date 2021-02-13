@@ -13,13 +13,17 @@ public class MyGame : Game
 	public static MyGame Instance;
     public static bool drawCollision = false;       //Debug draw collision?
 
+    public BeatmapButtonHandler beatmapButtonHandler;
     public MyGame() : base(1920, 1080, false, false, 1920, 1080, false)		// Create a window that's 800x600 and NOT fullscreen
 	{
 		Instance = this;
 		targetFps = 1000;
         GL.ClearColor(0.5f, 0.5f, 0.5f, 1);
-        MenuScreen menuScreen = new MenuScreen();
-        AddChild(menuScreen);
+        //MenuScreen menuScreen = new MenuScreen();
+        //AddChild(menuScreen);
+
+        beatmapButtonHandler = new BeatmapButtonHandler();
+        AddChild(beatmapButtonHandler);
     }
 
     float counter = 0;

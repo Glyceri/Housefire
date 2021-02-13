@@ -29,7 +29,7 @@ namespace GXPEngine.Objects.Handlers
 
         public BeatmapHandler(string beatmapName)
         {
-            SpawnBeatmap(new Beatmap(beatmapName));
+            SpawnBeatmap(new Beatmap(beatmapName, true));
         }
 
         public BeatmapHandler(Beatmap beatmap)
@@ -70,7 +70,6 @@ namespace GXPEngine.Objects.Handlers
         {
             beatmapPlayer = new BeatmapPlayer(this);
             beatmapPlayer.notes = new List<Note>(activeBeatmap.notes);
-            beatmapPlayer.points = new List<TimingPoint>(activeBeatmap.points);
         }
 
         public void Play()
@@ -110,19 +109,29 @@ namespace GXPEngine.Objects.Handlers
 
         void Updates()
         {
-            beatmapPlayer.Tick();
+            beatmapPlayer?.Tick();
             foreach (LaneObject lane in lanes) lane.Tick();
         }
 
 
         public Sound Stop(bool keepSongplaying = false)
         {
-            
+           
+
             beatmapPlayer?.Stop();
+            beatmapPlayer = null;
             background?.LateDestroy();
             background = null;
             foreach (LaneObject lane in lanes) lane?.LateDestroy();
             lanes = new List<LaneObject>();
+
+            Console.WriteLine("I stop??");
+            if (MyGame.Instance.beatmapButtonHandler.destroyed)
+            {
+                MyGame.Instance.beatmapButtonHandler?.LateDestroy();
+                MyGame.Instance.beatmapButtonHandler = new BeatmapButtonHandler();
+                MyGame.Instance.AddChild(MyGame.Instance.beatmapButtonHandler);
+            }
             return activeBeatmap?.Dispose(keepSongplaying);
 
         }

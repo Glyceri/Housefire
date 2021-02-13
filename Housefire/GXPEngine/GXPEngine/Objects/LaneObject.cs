@@ -12,7 +12,6 @@ namespace GXPEngine.Objects
 {
     public class LaneObject : GameObject
     {
-        Sprite debugOrigin;
 
         Sprite header;
         public List<Lane> lanes = new List<Lane>();
@@ -43,7 +42,7 @@ namespace GXPEngine.Objects
             if (laneCount <= 0) laneCount = 1;
 
             scale = new Vector2(0.5f, 1f);
-            AddDebugOrigin();
+            //AddDebugOrigin();
             for (int i = 0; i < laneCount; i++)
             {
                 AddLane(laneCount, i, flip);
@@ -57,15 +56,16 @@ namespace GXPEngine.Objects
                 }
             }
             AddHeader(laneCount);
-            AddChild(debugOrigin);
+           
 
             beatmapScoring = new BeatmapScoring(beatmapHandler, this, keyRegisters);
         }
 
         void AddDebugOrigin()
         {
-            debugOrigin = new Sprite("DebugOrigin.png", true, false);
+            Sprite debugOrigin = new Sprite("DebugOrigin.png", true, false);
             debugOrigin.SetOrigin(debugOrigin.width / 2, debugOrigin.height / 2);
+            AddChild(debugOrigin);
         }
 
         void AddHeader(int laneCount)
@@ -81,13 +81,13 @@ namespace GXPEngine.Objects
             
             if(i == 0)
             {
-                lanes.Add(new Lane(beatmapHandler, this, "Lane2.png"));
-            }else if(i == 2)
+                lanes.Add(new Lane(beatmapHandler, this, "LaneLeftSide.png"));
+            }else if(i == laneCount - 1)
             {
-                lanes.Add(new Lane(beatmapHandler, this, "Lane3.png"));
+                lanes.Add(new Lane(beatmapHandler, this, "LaneRightSide.png"));
             }else
             {
-                lanes.Add(new Lane(beatmapHandler, this));
+                lanes.Add(new Lane(beatmapHandler, this, "LaneMiddle.png"));
             }
             AddChild(lanes[i]);
             int laneWidth = lanes[i].lane.Width;

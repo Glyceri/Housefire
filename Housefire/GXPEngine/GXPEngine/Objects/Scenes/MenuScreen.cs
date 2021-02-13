@@ -71,7 +71,7 @@ namespace GXPEngine.Objects.Scenes
             {
                 if (buttons[i].Pressed())
                 {
-                    MyGame.Instance.StartBeatMap(new Beatmap(beatmaps[i]));
+                    //MyGame.Instance.StartBeatMap(new Beatmap(beatmaps[i]));
                     break;
                 }
             }
