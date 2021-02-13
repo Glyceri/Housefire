@@ -54,6 +54,7 @@
     <Compile Include="GXPEngine\AddOns\MouseHook.cs" />
     <Compile Include="GXPEngine\AddOns\TiledLoader.cs" />
     <Compile Include="GXPEngine\Objects\BeatmapButton.cs" />
+    <Compile Include="GXPEngine\Objects\BeatmapButtonEasyDraw.cs" />
     <Compile Include="GXPEngine\Objects\Enums\HitWindow.cs" />
     <Compile Include="GXPEngine\Objects\Footer.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\Beatmap.cs" />

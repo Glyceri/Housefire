@@ -18,12 +18,18 @@ public class MyGame : Game
 	{
 		Instance = this;
 		targetFps = 1000;
-        GL.ClearColor(0.5f, 0.5f, 0.5f, 1);
-        //MenuScreen menuScreen = new MenuScreen();
-        //AddChild(menuScreen);
 
-        beatmapButtonHandler = new BeatmapButtonHandler();
-        AddChild(beatmapButtonHandler);
+        //EasyDraw easyDraw = new EasyDraw(new Bitmap(@"E:\School\Periode 3\Project 3\HouseFire\Housefire\GXPEngine\bin\Debug\Songs\What the cat\BG.jpg"), false);
+        //AddChild(easyDraw);
+
+        GL.ClearColor(0.5f, 0.5f, 0.5f, 1);
+        MenuScreen menuScreen = new MenuScreen();
+        AddChild(menuScreen);
+
+        //beatmapButtonHandler = new BeatmapButtonHandler();
+        //AddChild(beatmapButtonHandler);
+
+       
     }
 
     float counter = 0;

@@ -20,6 +20,7 @@ namespace GXPEngine.Objects.Handlers
         public string name = "Song!";
         public int notesAmount = 0;
         public int sliderAmount = 0;
+        public float difficulty = 0;
 
         public string beatmapFile = "";
 
@@ -106,13 +107,14 @@ namespace GXPEngine.Objects.Handlers
 
         void ReadLines()
         {
-            if (line.Contains(failedValue = "bpm=")) BPM = int.Parse(line.Split('=')[1]);
-            else if (line.Contains(failedValue = "music=")) music = beatmapFile + @"\..\" + line.Split('=')[1];
-            else if (line.Contains(failedValue = "lanes=")) lanes = int.Parse(line.Split('=')[1]);
-            else if (line.Contains(failedValue = "background=")) background = beatmapFile + @"\..\" + line.Split('=')[1];
-            else if (line.Contains(failedValue = "offset=")) offset = int.Parse(line.Split('=')[1]);
-            else if (line.Contains(failedValue = "name=")) name = line.Split('=')[1];
-            else if (line.Contains(failedValue = "beatmap")) { noteMode = true; }
+            if      (line.Contains(failedValue = "bpm="))               BPM         = int.Parse(line.Split('=')[1]);
+            else if (line.Contains(failedValue = "music="))             music       = beatmapFile + @"\..\" + line.Split('=')[1];
+            else if (line.Contains(failedValue = "lanes="))             lanes       = int.Parse(line.Split('=')[1]);
+            else if (line.Contains(failedValue = "background="))        background  = beatmapFile + @"\..\" + line.Split('=')[1];
+            else if (line.Contains(failedValue = "offset="))            offset      = int.Parse(line.Split('=')[1]);
+            else if (line.Contains(failedValue = "name="))              name        = line.Split('=')[1];
+            else if (line.Contains(failedValue = "beatmap"))        {   noteMode    = true;                                                          }
+            else if (line.Contains(failedValue = "difficulty="))    {   difficulty  = int.Parse(line.Split('=')[1]) / (float)100;                    }
         }
     }
 }

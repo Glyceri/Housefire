@@ -82,14 +82,22 @@ namespace GXPEngine
 		/// Gets the current mouse x position in pixels.
 		/// </summary>
 		public static int mouseX {
-			get => GLContext.mouseX;
+			get 
+			{
+				float scale = WindowSize.instance.width / (float)ActualWindowSize.instance.width;
+				return (int)(GLContext.mouseX * scale); 
+			}
 		}
 		
 		/// <summary>
 		/// Gets the current mouse y position in pixels.
 		/// </summary>
 		public static int mouseY {
-			get => GLContext.mouseY; 
+			get
+			{
+				float scale = WindowSize.instance.height / (float)ActualWindowSize.instance.height;
+				return (int)(GLContext.mouseY * scale);
+			}
 		}
 	}
 }

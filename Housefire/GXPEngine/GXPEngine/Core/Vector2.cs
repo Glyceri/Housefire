@@ -98,6 +98,8 @@ namespace GXPEngine
         public static Vector2 operator -(Vector2 a) => new Vector2(-a.x, -a.y);
         public static Vector2 operator /(Vector2 a, float b) => new Vector2(a.x / b, a.y / b);
 
+        public static Vector2 operator /(Vector2 a, Vector2 b) => new Vector2(a.x / b.x, a.y / b.y);
+
     }
 
 }

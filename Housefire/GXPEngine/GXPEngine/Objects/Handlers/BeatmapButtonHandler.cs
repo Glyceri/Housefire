@@ -11,6 +11,8 @@ namespace GXPEngine.Objects.Handlers
 {
     public class BeatmapButtonHandler : GameObject
     {
+
+        /*
         List<Beatmap> beatmaps = new List<Beatmap>();
         List<BeatmapButton> beatmapButtons = new List<BeatmapButton>();
 
@@ -219,6 +221,7 @@ namespace GXPEngine.Objects.Handlers
         void CleanupOld()
         {
             beatmaps.Clear();
-        }
+        }*/
+
     }
 }

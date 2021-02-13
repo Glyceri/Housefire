@@ -73,7 +73,7 @@ namespace GXPEngine
 			soundChannel = null;
 		}
 
-		SoundChannel soundChannel;
+		public SoundChannel soundChannel { get; private set; }
 
 		/// <summary>
 		/// Play the specified paused and return the newly created SoundChannel
