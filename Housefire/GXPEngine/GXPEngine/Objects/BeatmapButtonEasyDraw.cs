@@ -45,6 +45,8 @@ namespace GXPEngine.Objects
             {
                 counter += Time.deltaTime;
                 alpha = startAlpha + (toAlphaOverTime * (counter / timeToSpend));
+                if (alpha < 0) alpha = 0;
+                if (alpha > 1) alpha = 1;
                 if(counter >= timeToSpend)
                 {
                     animateOvertime = false;

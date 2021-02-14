@@ -35,7 +35,6 @@ namespace GXPEngine.Objects
         {
             this.beatmapHandler = beatmapHandler;
             keyboardHook = new KeyboardHook();
-            
             keyboardHook.Install();
 
             flipped = flip;
@@ -122,7 +121,6 @@ namespace GXPEngine.Objects
 
         public void SpawnNote(Note note, string noteImg = "Note.png")
         {
-            //Console.WriteLine("Spawning note: " + note.lane + " ,Time: " + note.hitTime + " ,Length: " + note.length);
             if (flipped)
             {
                 lanes[lanes.Count - note.lane - 1].SpawnNode(note.length, noteImg);

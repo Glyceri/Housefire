@@ -2,6 +2,7 @@ using System;
 using GXPEngine.Core;
 using GXPEngine.Managers;
 using System.Collections.Generic;
+using GXPEngine.Core.Audio;
 
 namespace GXPEngine
 {
@@ -325,6 +326,6 @@ namespace GXPEngine
 			output += _updateManager.GetDiagnostics (); 
 			return output;
 		}
-	}
+    }
 }
 

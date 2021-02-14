@@ -7,6 +7,7 @@ using GXPEngine.Objects;
 using GXPEngine.Objects.Handlers;
 using GXPEngine.Objects.Scenes;
 using GXPEngine.OpenGL;
+using GXPEngine.Core.Audio;
 
 public class MyGame : Game
 {
@@ -14,22 +15,46 @@ public class MyGame : Game
     public static bool drawCollision = false;       //Debug draw collision?
 
     public BeatmapButtonHandler beatmapButtonHandler;
+
+    MainMenuScreen menuScreen;
+
+    public MenuMusicHandler musicHandler;
+    public InsertCoinMenu coinMenu;
+
     public MyGame() : base(1920, 1080, false, false, 1920, 1080, false)		// Create a window that's 800x600 and NOT fullscreen
 	{
 		Instance = this;
 		targetFps = 1000;
+        GL.ClearColor(0f, 0f, 0f, 1);
 
-        //EasyDraw easyDraw = new EasyDraw(new Bitmap(@"E:\School\Periode 3\Project 3\HouseFire\Housefire\GXPEngine\bin\Debug\Songs\What the cat\BG.jpg"), false);
-        //AddChild(easyDraw);
+        musicHandler = new MenuMusicHandler();
 
-        GL.ClearColor(0.5f, 0.5f, 0.5f, 1);
-        MenuScreen menuScreen = new MenuScreen();
+        menuScreen = new MainMenuScreen();
         AddChild(menuScreen);
 
-        //beatmapButtonHandler = new BeatmapButtonHandler();
-        //AddChild(beatmapButtonHandler);
 
-       
+        menuScreen.canBeInteractedWith = false;
+
+        coinMenu = new InsertCoinMenu();
+        coinMenu.onAnimationEnd += OnCoindAnimationEnd;
+        AddChild(coinMenu);
+
+        AddChild(musicHandler);
+    }
+
+    void OnStartup()
+    {
+        coinMenu.visible = true;
+        menuScreen.canBeInteractedWith = false;
+        coinMenu.canBeInteractedWith = true;
+    }
+
+    void OnCoindAnimationEnd()
+    {
+        musicHandler.canBeInteractedWith = true;
+        menuScreen.canBeInteractedWith = true;
+        coinMenu.canBeInteractedWith = false;
+        coinMenu.visible = false;
     }
 
     float counter = 0;
@@ -69,7 +94,37 @@ public class MyGame : Game
             OsuToBeatConverter.ConvertFile(4);
         }
 
-        if(counter >= 1)
+        if (Input.GetKeyDown(Key.BACKSPACE))
+        {
+            OnStartup();
+        }
+
+        if (Input.GetKeyDown(Key.G))
+        {
+            musicHandler.canBeInteractedWith = !musicHandler.canBeInteractedWith;
+        }
+
+        if (Input.GetKeyDown(Key.H))
+        {
+            menuScreen.menuScreen.canBeInteractedWith = !menuScreen.menuScreen.canBeInteractedWith;
+        }
+
+        if (Input.GetKeyDown(Key.F))
+        {
+            coinMenu.visible = !coinMenu.visible;
+        }
+
+        if (Input.GetKeyDown(Key.J))
+        {
+            musicHandler.visible = !musicHandler.visible;
+        }
+
+        if (Input.GetKeyDown(Key.K))
+        {
+            menuScreen.menuScreen.visible = !menuScreen.menuScreen.visible;
+        }
+
+        if (counter >= 1)
         {
             counter = 0;
             Debug.WriteLine(currentFps);

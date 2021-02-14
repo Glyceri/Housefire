@@ -11,13 +11,10 @@ namespace GXPEngine.Objects
     public class Button : EasyDraw
     {
 
-        public Button() : base(200, 100, false)
+        public Button(int width, int height) : base(width, height, false)
         {
-            collider = new BoxCollider(Vector2.Zero, new Vector2(200, 100), this);
+            collider = new BoxCollider(Vector2.Zero, new Vector2(width, height), this);
             collider.isTrigger = true;
-            //if (image == null) return;
-            //DrawSprite(image, new Vector2(200 / (float)image.Width, 100 / (float)image.Height), 0, 0, false);
-            
             
         }
 

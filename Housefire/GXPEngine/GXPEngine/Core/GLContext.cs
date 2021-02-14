@@ -1,6 +1,8 @@
 //#define USE_FMOD_AUDIO
 
 using System;
+using System.Diagnostics;
+using GXPEngine.Core.Audio;
 using GXPEngine.OpenGL;
 
 namespace GXPEngine.Core
@@ -171,6 +173,7 @@ namespace GXPEngine.Core
 
                 ActualWindowSize.instance.width = newWidth;
                 ActualWindowSize.instance.height = newHeight;
+                
             });
             InitializeSoundSystem();
         }
@@ -228,6 +231,7 @@ namespace GXPEngine.Core
         //------------------------------------------------------------------------------------------------------------------------
         public void Close()
         {
+            AudioHandler.Dispose();
             _soundSystem.Deinit();
             GL.glfwCloseWindow();
             GL.glfwTerminate();
@@ -268,6 +272,7 @@ namespace GXPEngine.Core
 
 
             } while (GL.glfwGetWindowParam(GL.GLFW_ACTIVE) == 1);
+            AudioHandler.Dispose();
         }
 
 

@@ -20,7 +20,8 @@ namespace GXPEngine.Objects.Handlers
         public string name = "Song!";
         public int notesAmount = 0;
         public int sliderAmount = 0;
-        public float difficulty = 0;
+        public int difficulty = 0;
+        public int startTime = 0;
 
         public string beatmapFile = "";
 
@@ -114,7 +115,8 @@ namespace GXPEngine.Objects.Handlers
             else if (line.Contains(failedValue = "offset="))            offset      = int.Parse(line.Split('=')[1]);
             else if (line.Contains(failedValue = "name="))              name        = line.Split('=')[1];
             else if (line.Contains(failedValue = "beatmap"))        {   noteMode    = true;                                                          }
-            else if (line.Contains(failedValue = "difficulty="))    {   difficulty  = int.Parse(line.Split('=')[1]) / (float)100;                    }
+            else if (line.Contains(failedValue = "menutime="))          startTime   = int.Parse(line.Split('=')[1]);
+            else if (line.Contains(failedValue = "difficulty="))        difficulty  = int.Parse(line.Split('=')[1]);
         }
     }
 }

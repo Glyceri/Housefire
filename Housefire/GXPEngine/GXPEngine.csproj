@@ -11,6 +11,21 @@
     <AssemblyName>GXPEngine</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -39,6 +54,30 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Reference Include="Microsoft.Win32.Registry, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Win32.Registry.4.7.0\lib\net461\Microsoft.Win32.Registry.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio">
+      <HintPath>bin\Debug\lib\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.Asio">
+      <HintPath>bin\Debug\lib\NAudio.Asio.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.Core">
+      <HintPath>bin\Debug\lib\NAudio.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.Midi">
+      <HintPath>bin\Debug\lib\NAudio.Midi.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.Wasapi">
+      <HintPath>bin\Debug\lib\NAudio.Wasapi.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.WinForms">
+      <HintPath>bin\Debug\lib\NAudio.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.WinMM">
+      <HintPath>bin\Debug\lib\NAudio.WinMM.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Diagnostics.Process, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Diagnostics.Process.4.3.0\lib\net461\System.Diagnostics.Process.dll</HintPath>
@@ -46,6 +85,12 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Security.AccessControl, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.AccessControl.4.7.0\lib\net461\System.Security.AccessControl.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Principal.Windows, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Principal.Windows.4.7.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +98,10 @@
     <Compile Include="GXPEngine\AddOns\KeyboardHook.cs" />
     <Compile Include="GXPEngine\AddOns\MouseHook.cs" />
     <Compile Include="GXPEngine\AddOns\TiledLoader.cs" />
+    <Compile Include="GXPEngine\Core\Audio\AudioHandler.cs" />
+    <Compile Include="GXPEngine\Core\Audio\AudioObject.cs" />
+    <Compile Include="GXPEngine\Core\Audio\AudioThread.cs" />
+    <Compile Include="GXPEngine\Objects\BarObject.cs" />
     <Compile Include="GXPEngine\Objects\BeatmapButton.cs" />
     <Compile Include="GXPEngine\Objects\BeatmapButtonEasyDraw.cs" />
     <Compile Include="GXPEngine\Objects\Enums\HitWindow.cs" />
@@ -68,15 +117,21 @@
     <Compile Include="GXPEngine\Objects\Handlers\BeatScore.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\Data\CheckingData.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\Data\CheckingNote.cs" />
+    <Compile Include="GXPEngine\Objects\Handlers\MainMenuBackgroundHandler.cs" />
+    <Compile Include="GXPEngine\Objects\Handlers\MenuMusicHandler.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\Note.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\OsuToBeatConverter.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\TimingPoint.cs" />
     <Compile Include="GXPEngine\Objects\HitPlate.cs" />
     <Compile Include="GXPEngine\Objects\Lane.cs" />
     <Compile Include="GXPEngine\Objects\LaneObject.cs" />
+    <Compile Include="GXPEngine\Objects\Player.cs" />
+    <Compile Include="GXPEngine\Objects\Scenes\InsertCoinMenu.cs" />
+    <Compile Include="GXPEngine\Objects\Scenes\MainMenuScreen.cs" />
     <Compile Include="GXPEngine\Objects\Scenes\MenuScreen.cs" />
     <Compile Include="GXPEngine\Objects\NoteObject.cs" />
     <Compile Include="GXPEngine\Objects\Button.cs" />
+    <Compile Include="GXPEngine\Objects\Scenes\MenuWalker.cs" />
     <Compile Include="MyGame.cs" />
     <Compile Include="GXPEngine\Canvas.cs" />
     <Compile Include="GXPEngine\Game.cs" />
@@ -119,5 +174,17 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.8 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
 </Project>
