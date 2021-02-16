@@ -19,20 +19,41 @@ namespace GXPEngine.Objects.Handlers
             {PrecisionLevel.Perfect, 200}   };
 
         public int combo = 0;
+        public int biggestCombo = 0;
         public int score = 0;
 
-        public void BreakCombo(EasyDraw easyDraw)
+        public void BreakCombo(EasyDraw headerText)
         {
             combo = 0;
-            easyDraw.Clear(Color.Red);
-            easyDraw.Text("MISS", 0, 0);
+            DrawCombo(headerText);
         }
+
         public void AddCombo()
         {
             combo++;
+            if(combo > biggestCombo)
+            {
+                biggestCombo = combo;
+            }
         }
 
-        public void AddScore(PrecisionLevel precisionLevel, EasyDraw easyDraw)
+        void DrawCombo(EasyDraw headerText)
+        {
+            headerText.Clear(Color.Transparent);
+            headerText.TextAlign(CenterMode.Center, CenterMode.Center);
+            headerText.TextSize(30);
+            headerText.Text("Combo: " + combo, headerText.width / 2, headerText.height / 2);
+        }
+
+        void DrawScore(EasyDraw scoreText)
+        {
+            scoreText.Clear(Color.Transparent);
+            scoreText.TextAlign(CenterMode.Center, CenterMode.Center);
+            scoreText.TextSize(30);
+            scoreText.Text("Score: " + score.ToString(), scoreText.width/2, scoreText.height/2);
+        }
+
+        public void AddScore(PrecisionLevel precisionLevel, EasyDraw scoreText, EasyDraw headerText)
         {
             float comboMulti = 1;
             if (combo >= 50)    comboMulti = 1.5f;
@@ -42,8 +63,10 @@ namespace GXPEngine.Objects.Handlers
             int scoreValue = Mathf.Ceiling(scoreValues[precisionLevel] * comboMulti);
             score += scoreValue;
 
-            easyDraw.Clear(Color.Red);
-            easyDraw.Text(scoreValue.ToString() + " : " + score + "\n combo: " + combo.ToString() , 0, 0);
+            DrawCombo(headerText);
+            DrawScore(scoreText);
+
+
 
         }
     }
