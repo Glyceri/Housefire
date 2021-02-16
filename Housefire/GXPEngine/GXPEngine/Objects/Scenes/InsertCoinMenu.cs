@@ -22,11 +22,21 @@ namespace GXPEngine.Objects.Scenes
         public delegate void AnimationEnd();
         public event AnimationEnd onAnimationEnd = null;
 
+        //I mean I should fix this to have the right dimensions and all now that I changed the menu background thing but :eyes: do I care
         public InsertCoinMenu() : base(1920,1080, false)
         {
-            using (Bitmap bitmap = new Bitmap("notsellectedsong.png"))
+            using (Bitmap bitmap = new Bitmap("backgroundpanel.png"))
             {
+                bitmap.MakeTransparent(Color.FromArgb(127, 127, 127));
                 DrawSprite(bitmap, new Vector2(1920 / (float)bitmap.Width, 1080 / (float)bitmap.Height), 0, 0, false);
+            }
+            using(Bitmap roboRhythm = new Bitmap("Robo_Rhythm.png"))
+            //using(Bitmap roboRhythm = new Bitmap("thumbnail.png"))
+            {
+                DrawSprite(roboRhythm, new Vector2(1400 / (float)roboRhythm.Width, 1000 / (float)roboRhythm.Height), 0.25f,0, false);
+            }
+
+            using(Bitmap bitmap = new Bitmap("backgroundpanel.png")) { 
                 button = new Button(1920, 100);
                
                 button.DrawSprite(bitmap, new Vector2(button.width / (float)bitmap.Width, button.height / (float)bitmap.Height), 0, 0, false);
