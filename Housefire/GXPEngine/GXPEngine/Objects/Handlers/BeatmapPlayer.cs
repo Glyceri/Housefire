@@ -27,24 +27,28 @@ namespace GXPEngine.Objects.Handlers
             HandleNodeSpawn();
         }
 
+        public bool forceStop = false;
+
         void HandleNodeSpawn()
         {
 
             for (int i = notes.Count - 1; i >= 0; i--)
             {
-                if (beatmapHandler.infiniteBeatmapTimer + ((1000 / beatmapHandler.BPM_calc) * 1000) + beatmapHandler.activeBeatmap.offset >= notes[i].hitTime)
+                if(beatmapHandler.infiniteBeatmapTimer > notes[i].hitTime - (1500 - (BeatmapHandler.approachRate*0.5f))) 
+                //if (beatmapHandler.infiniteBeatmapTimer + ((1000 / beatmapHandler.BPM_calc) * 1000) + beatmapHandler.activeBeatmap.offset >= notes[i].hitTime)
+                //if (beatmapHandler.infiniteBeatmapTimer + ((1000 / (float)((60000/(float)250) * 4)) * 1000) + beatmapHandler.activeBeatmap.offset >= notes[i].hitTime)
                 {
                     foreach (LaneObject lane in beatmapHandler.lanes)
                     {
                         if (notes[i].length > 0)
                         {
-                            lane.SpawnNote(notes[i]);
+                            lane.SpawnNote(notes[i], "Note.png");
                             lane.SpawnNote(new Note(notes[i].lane, notes[i].hitTime, -1), "NoteOpenTop.png");
                             notesInQueue.Add(new Note(notes[i].lane, notes[i].hitTime + notes[i].length, -1));
                         }
                         else
                         {
-                            lane.SpawnNote(notes[i]);
+                            lane.SpawnNote(notes[i], "Note.png");
                         }
                     }
                     notes.RemoveAt(i);
@@ -53,7 +57,8 @@ namespace GXPEngine.Objects.Handlers
 
             for (int i = notesInQueue.Count - 1; i >= 0; i--)
             {
-                if (beatmapHandler.infiniteBeatmapTimer + ((1000 / beatmapHandler.BPM_calc) * 1000) + beatmapHandler.activeBeatmap.offset >= notesInQueue[i].hitTime)
+                //if (beatmapHandler.infiniteBeatmapTimer + ((1000 / beatmapHandler.BPM_calc) * 1000) + beatmapHandler.activeBeatmap.offset >= notesInQueue[i].hitTime)
+                if (beatmapHandler.infiniteBeatmapTimer > notesInQueue[i].hitTime - (1500 - (BeatmapHandler.approachRate*0.5f)))
                 {
                     foreach (LaneObject lane in beatmapHandler.lanes)
                     {
@@ -63,12 +68,36 @@ namespace GXPEngine.Objects.Handlers
                 }
             }
 
-            if(notes.Count <= 0 && notesInQueue.Count <= 0)
+            if((notes.Count <= 0 && notesInQueue.Count <= 0) || forceStop)
             {
-                endingTimer += Time.deltaTime;
-                if(endingTimer >= 2f)
+              
+
+
+                if(forceStop && endingTimer < 3)
                 {
-                    MyGame.Instance.oldSong = beatmapHandler.Stop(true);
+                    endingTimer = 3;
+                }
+                endingTimer += Time.deltaTime;
+                if (endingTimer >= 3f)
+                {
+                    beatmapHandler.delta = 1 - (endingTimer - 3);
+                    MyGame.Instance.musicHandler.visible = true;
+                    MyGame.Instance.musicHandler.SetXY(0, 0 - (float)MyGame.Instance.musicHandler.backgroundBar.height * (1 - (endingTimer - 3)));
+                    MyGame.Instance.menuScores.delta = 1 - (endingTimer - 3);
+                    MyGame.Instance.menuScores.visible = true;
+                    MyGame.Instance.menuScores.canBeInteractedWith = false;
+                    
+                }
+                if (endingTimer >= 4f)
+                {
+                    MyGame.Instance.musicHandler.SetXY(0, 0);
+                    MyGame.Instance.menuScores.SetScores(beatmapHandler.activeBeatmap, beatmapHandler.lanes[0].beatmapScoring.beatScore, beatmapHandler.lanes[1].beatmapScoring.beatScore);
+                    forceStop = false;
+                    MyGame.Instance.menuScores.visible = true;
+                    MyGame.Instance.menuScores.delta = 0;
+                    MyGame.Instance.menuScores.canBeInteractedWith = true;
+
+                    beatmapHandler.Stop(true);
                 }
             }
         }
