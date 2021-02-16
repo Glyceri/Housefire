@@ -16,7 +16,7 @@ namespace GXPEngine.Objects.Scenes
     public class MenuScreen : GameObject
     {
         bool _canBeInteractedWith = true;
-        public bool canBeInteractedWith { get => _canBeInteractedWith && visible; set { _canBeInteractedWith = value; backgroundHandler.canBeInteractedWith = value; } }
+        public bool canBeInteractedWith { get => _canBeInteractedWith && visible; set { _canBeInteractedWith = value; backgroundHandler.canBeInteractedWith = value; menuSongInfo.canBeInteractedWith = value; } }
 
         List<BeatmapButton> beatmapButtons = new List<BeatmapButton>();
         List<BeatmapSmall> smallBeatmaps = new List<BeatmapSmall>();
@@ -37,10 +37,12 @@ namespace GXPEngine.Objects.Scenes
 
         int selectedBeatmap = -1;
 
-       
-        MainMenuBackgroundHandler backgroundHandler;
 
-        MainMenuScreen mainMenu;
+        public MainMenuBackgroundHandler backgroundHandler { get; private set; }
+
+        public MainMenuScreen mainMenu { get; private set; }
+
+        public MenuSongInfo menuSongInfo { get; private set; }
 
         public MenuScreen(MainMenuScreen mainMenuScreen)
         {
@@ -49,7 +51,10 @@ namespace GXPEngine.Objects.Scenes
 
             backgroundHandler = new MainMenuBackgroundHandler();
             AddChild(backgroundHandler);
-            
+
+            menuSongInfo = new MenuSongInfo(this);
+            AddChild(menuSongInfo);
+
             MakeList();
 
             amountAllowedActive = Mathf.Ceiling((screenHeight - elementSpacing.y) / (elementSize.y + elementSpacing.y)) + amountOverflow;
@@ -71,14 +76,11 @@ namespace GXPEngine.Objects.Scenes
             mouseHook.MouseWheel += new MouseHookCallback(MouseHook);
             mouseHook.Install();
 
-            
+
 
             try
             {
-                selectedBeatmap = new Random().Next(smallBeatmaps.Count - 1);
-                scrollAmount = (float)(((smallBeatmaps.Count * (elementSize.y + elementSpacing.y)) - screenHeight + elementSpacing.y) / (float)smallBeatmaps.Count) * (int)Mathf.Clamp(selectedBeatmap - 3, 0, 10000);
-                underflow = (int)Mathf.Clamp(selectedBeatmap - (amountAllowedActive - amountOverflow), 0, 10000);
-                SetSelectedSong(selectedBeatmap);
+                SetSelectedSong(0);
 
                 SetBackground();
             }
@@ -117,16 +119,16 @@ namespace GXPEngine.Objects.Scenes
                 MyGame.Instance.musicHandler.smallBeatmap = smallBeatmaps[selectedBeatmap];
             }
             backgroundHandler.BaseUpdate();
-            if (canBeInteractedWith) 
-            if (smallBeatmaps.Count - 1 >= amountAllowedActive - amountOverflow)
-            {
-                Scroll();
-                Underflow();
-            }
+            if (canBeInteractedWith)
+                if (smallBeatmaps.Count - 1 >= amountAllowedActive - amountOverflow)
+                {
+                    Scroll();
+                    Underflow();
+                }
             ImageLoader();
             ImagePositions();
-            if(canBeInteractedWith)
-            BeatmapClick();
+            if (canBeInteractedWith)
+                BeatmapClick();
         }
 
 
@@ -141,7 +143,7 @@ namespace GXPEngine.Objects.Scenes
                 beatmapButtons[i]?.LateDestroy();
             }
             beatmapButtons?.Clear();
-            
+
         }
 
         void SetBackground()
@@ -153,23 +155,33 @@ namespace GXPEngine.Objects.Scenes
                     backgroundHandler.SetBackground(bitmap);
                 }
             }
-            catch { }
+            catch
+            {
+                try
+                {
+                    using (Bitmap bitmap = new Bitmap("backgroundfinal.jpg"))
+                    {
+                        backgroundHandler.SetBackground(bitmap);
+                    }
+                }
+                catch { }
+            }
         }
 
         void Scroll()
         {
-           
-                if (Input.GetKey(Key.DOWN))
-                {
-                    scrollAmount += 800 * Time.deltaTime;
-                }
-                if (Input.GetKey(Key.UP))
-                {
-                    scrollAmount -= 800 * Time.deltaTime;
-                }
 
-                scrollAmount = Mathf.Clamp(scrollAmount, 0, (smallBeatmaps.Count * (elementSize.y + elementSpacing.y)) - screenHeight + elementSpacing.y);
-            
+            if (Input.GetKey(Key.DOWN))
+            {
+                scrollAmount += 800 * Time.deltaTime;
+            }
+            if (Input.GetKey(Key.UP))
+            {
+                scrollAmount -= 800 * Time.deltaTime;
+            }
+
+            scrollAmount = Mathf.Clamp(scrollAmount, 0, (smallBeatmaps.Count * (elementSize.y + elementSpacing.y)) - screenHeight + elementSpacing.y);
+
         }
         void Underflow()
         {
@@ -188,7 +200,7 @@ namespace GXPEngine.Objects.Scenes
                     {
                         but.DrawNotSelected();
                     }
-                    if(underflow == selectedBeatmap)
+                    if (underflow == selectedBeatmap)
                     {
                         but.DrawSelected();
                     }
@@ -207,7 +219,7 @@ namespace GXPEngine.Objects.Scenes
                     {
                         but.DrawNotSelected();
                     }
-                    if (selectedBeatmap == underflow -1 + (amountAllowedActive - amountOverflow))
+                    if (selectedBeatmap == underflow - 1 + (amountAllowedActive - amountOverflow))
                     {
                         but.DrawSelected();
                     }
@@ -231,6 +243,8 @@ namespace GXPEngine.Objects.Scenes
             }
         }
 
+        public float globalOffset = 0;
+
         void ImagePositions()
         {
             for (int i = 0; i < beatmapButtons.Count; i++)
@@ -240,7 +254,7 @@ namespace GXPEngine.Objects.Scenes
                 float scaledDist = Vector2.Distance(butAndEl, new Vector2(0, (1080 / (float)2))) / 512;
 
                 beatmapButtons[i].scale *= new Vector2(1.65f - (0.4f * (scaledDist)), 1f - (0.1f * scaledDist));
-                beatmapButtons[i].SetXY(elementSpacing.x - beatmapButtons[i].width, (elSpace) - scrollAmount);
+                beatmapButtons[i].SetXY(elementSpacing.x - beatmapButtons[i].width + (globalOffset * 1000), (elSpace) - scrollAmount);
 
             }
         }
@@ -257,12 +271,12 @@ namespace GXPEngine.Objects.Scenes
                         hit = i;
                     }
                 }
-                
-                if(hit != -1)
+
+                if (hit != -1)
                 {
                     for (int i = 0; i < beatmapButtons.Count; i++)
                     {
-                        if(i != hit)  beatmapButtons[i].DrawNotSelected();
+                        if (i != hit) beatmapButtons[i].DrawNotSelected();
                     }
                 }
             }
@@ -277,6 +291,7 @@ namespace GXPEngine.Objects.Scenes
             }
             catch { }
             mainMenu.SetSelectedSong(beatmapButtons[selected - underflow]);
+            menuSongInfo.SetBeatmap(smallBeatmaps[selectedBeatmap]);
             SetBackground();
         }
 
