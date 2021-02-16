@@ -22,6 +22,7 @@ namespace GXPEngine.Objects.Handlers
         public int sliderAmount = 0;
         public int difficulty = 0;
         public int startTime = 0;
+        public string internalName = "";
 
         public string beatmapFile = "";
 
@@ -92,6 +93,61 @@ namespace GXPEngine.Objects.Handlers
             }
         }
 
+        public List<Note> ReadNotes()
+        {
+            List<Note> notes = new List<Note>();
+            try
+            {
+                string[] lines = File.ReadAllLines(beatmapFile);
+                string line = "";
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    string failedValue = "";
+                    try
+                    {
+                        line = lines[i];
+                        if (line.Contains("//")) line = line.Split('/')[0];
+                        line = line.TrimEnd(' ');
+                        if (!line.EndsWith(";")) continue;
+                        line = line.Replace(";", "");
+
+                        if (!noteMode)
+                        {
+                            if (line.Contains(failedValue = "beatmap")) { noteMode = true; }
+                        }
+                        else if (noteMode)
+                        {
+                            try
+                            {
+                                if (line == "end")
+                                {
+                                    noteMode = false;
+                                    continue;
+                                }
+                                string[] csl = line.Replace(";", "").Split(',');
+                                Note note = new Note();
+
+                                note.lane = int.Parse(csl[0]);
+                                note.hitTime = csl[1].Contains("-") ? -1 : int.Parse(csl[1]);
+                                note.length = csl[2].Contains("-") ? -1 : int.Parse(csl[2]) - note.hitTime;
+                                notes.Add(note);
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Something in the note section went wrong: " + line);
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Loading a value failed: " + failedValue);
+                    }
+                }
+            }
+            catch { }
+            return notes;
+        }
+
         public void WriteDebug()
         {
             
@@ -117,6 +173,7 @@ namespace GXPEngine.Objects.Handlers
             else if (line.Contains(failedValue = "beatmap"))        {   noteMode    = true;                                                          }
             else if (line.Contains(failedValue = "menutime="))          startTime   = int.Parse(line.Split('=')[1]);
             else if (line.Contains(failedValue = "difficulty="))        difficulty  = int.Parse(line.Split('=')[1]);
+            else if (line.Contains(failedValue = "internal="))          internalName= line.Split('=')[1];
         }
     }
 }
