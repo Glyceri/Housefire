@@ -11,15 +11,15 @@ namespace GXPEngine.Objects.Handlers
     {
         public bool canBeInteractedWith = true;
 
-        BeatmapButtonEasyDraw easyDraw;
+        public BeatmapButtonEasyDraw background;
 
         
 
         public MainMenuBackgroundHandler() 
         {
-            easyDraw = new BeatmapButtonEasyDraw(1920, 1080, false);
-            AddChild(easyDraw);
-            easyDraw.scale = new Vector2(1.007f, 1.007f);
+            background = new BeatmapButtonEasyDraw(1920, 1080, false);
+            AddChild(background);
+            background.scale = new Vector2(1.007f, 1.007f);
 
             
         }
@@ -27,17 +27,17 @@ namespace GXPEngine.Objects.Handlers
 
         public void SetBackground(Bitmap bitmap)
         {
-            easyDraw.Clear(Color.Transparent);
-            easyDraw.DrawSprite(bitmap, new Vector2(1920/(float)bitmap.Width, 1080/ (float)bitmap.Height), 0,0, false);
-            easyDraw.AnimateAlphaOverTime(0, 1f, 1f);
+            background.Clear(Color.Transparent);
+            background.DrawSprite(bitmap, new Vector2(1920/(float)bitmap.Width, 1080/ (float)bitmap.Height), 0,0, false);
+            background.AnimateAlphaOverTime(0, 1f, 1f);
         }
 
 
         public void BaseUpdate()
         {
-            easyDraw.BaseUpdate();
+            background.BaseUpdate();
             if(canBeInteractedWith)
-            easyDraw.SetXY(-((1920 / (float)1000) * 7 * (Input.mouseX / (float)1920)), - ((1080 / (float)1000) * 7 * (Input.mouseY / (float)1080)));
+            background.SetXY(-((1920 / (float)1000) * 7 * (Input.mouseX / (float)1920)), - ((1080 / (float)1000) * 7 * (Input.mouseY / (float)1080)));
         }
     }
 }
