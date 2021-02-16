@@ -16,7 +16,7 @@ namespace GXPEngine.Objects.Handlers
         public bool _canBeInteractedWith = true;
         public bool canBeInteractedWith { get => _canBeInteractedWith && (visible && !disableVisibility); set { _canBeInteractedWith = value; } }
 
-        EasyDraw backgroundBar;
+        public EasyDraw backgroundBar;
 
         public AudioObject music;
         string musicName = "";
@@ -184,7 +184,7 @@ namespace GXPEngine.Objects.Handlers
 
         void RestartMusic()
         {
-            if (findNew && (music?.disposed ?? true))
+            if (findNew && (music?.disposed ?? true) && !(MyGame.Instance.beatmapHandler?.isPlaying ?? true))
             {
                 LoadMusic(musicName);
                 music?.Play();
@@ -253,8 +253,11 @@ namespace GXPEngine.Objects.Handlers
         {
             try
             {
-                music?.Play();
-                music.audioFile.CurrentTime = new TimeSpan(0, 0, 0, 0, starttime);
+                if (music != null)
+                {
+                    music?.Play();
+                    music.audioFile.CurrentTime = new TimeSpan(0, 0, 0, 0, starttime);
+                }
             }
             catch { }
         }
