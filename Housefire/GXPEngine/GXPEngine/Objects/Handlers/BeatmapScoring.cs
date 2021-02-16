@@ -33,18 +33,21 @@ namespace GXPEngine.Objects.Handlers
         List<VKeys> validKeys;
         List<bool> hasGoneUp;
 
-        EasyDraw easyDraw = new EasyDraw(500, 400, false);
+        //EasyDraw easyDraw = new EasyDraw(500, 400, false);
 
-        public BeatmapScoring(BeatmapHandler beatmapHandler, LaneObject laneObject, VKeys[] validKeys)
+        Player player;
+
+        public BeatmapScoring(BeatmapHandler beatmapHandler, LaneObject laneObject, Player player)
         {
-            laneObject.AddChild(easyDraw);
-            easyDraw.TextSize(60);
-            easyDraw.SetColor(200, 200, 200);
-            easyDraw.TextAlign(CenterMode.Min, CenterMode.Min);
-            easyDraw.SetXY(((int)Mathf.Floor(laneObject.lanes.Count / 2)) * 100, 0);
+            this.player = player;
+            //laneObject.AddChild(easyDraw);
+            //easyDraw.TextSize(60);
+            //easyDraw.SetColor(200, 200, 200);
+           // easyDraw.TextAlign(CenterMode.Min, CenterMode.Min);
+            //easyDraw.SetXY(((int)Mathf.Floor(laneObject.lanes.Count / 2)) * 100, 0);
 
-            SetupThis(beatmapHandler, laneObject, validKeys);
-            SetupGoneUp(validKeys);
+            SetupThis(beatmapHandler, laneObject, player.keybinds[laneObject.lanes.Count -1]);
+            SetupGoneUp(player.keybinds[laneObject.lanes.Count - 1]);
             SetupKeyboardHook(laneObject);
             SetupNotes();
         }
@@ -63,8 +66,6 @@ namespace GXPEngine.Objects.Handlers
             {
                 hasGoneUp.Add(true);
             }
-            //hasGoneUp =hasGoneUp.Select(i => true).ToList();
-            Console.WriteLine("Has gone up count: " + hasGoneUp.Count);
         }
 
         void SetupKeyboardHook(LaneObject laneObject)
@@ -75,7 +76,7 @@ namespace GXPEngine.Objects.Handlers
 
         void SetupNotes()
         {
-            List<Note> tempNotes = beatmapHandler.activeBeatmap.notes;
+            List<Note> tempNotes = beatmapHandler.activeBeatmap.ReadNotes();
             downNotes = new List<CheckingNote>[validKeys.Count];
             upNotes = new List<CheckingNote>[validKeys.Count];
 
@@ -96,15 +97,6 @@ namespace GXPEngine.Objects.Handlers
                     }
                 }
             }
-
-            Console.WriteLine("Downnotes: " + downNotes.Length);
-            Console.WriteLine("Upnotes: " + upNotes.Length);
-
-            for(int i = 0; i < 4; i++)
-            {
-                Console.WriteLine("Downnotes[" +i + "]: " + downNotes[i].Count);
-                Console.WriteLine("Upnotes[" + i + "]: " + upNotes[i].Count);
-            }
         }
 
 
@@ -120,13 +112,11 @@ namespace GXPEngine.Objects.Handlers
             {
                 if (downNotes[i].Count > 0)
                 {
-                   // Console.WriteLine("Beat offset: " + beatmapHandler.infiniteBeatmapTimer + BeatmapHandler.beatOffset);
-                    //Console.WriteLine("Downnote Window: " + downNotes[i][0].noteTime + (HitWindow.miss * 2));
-                    if (beatmapHandler.infiniteBeatmapTimer > downNotes[i][0].noteTime + HitWindow.miss + beatmapHandler.activeBeatmap.offset)
+            
+                    if(beatmapHandler.infiniteBeatmapTimer > downNotes[i][0].noteTime - (1000 - beatmapHandler.BPM_calc) + HitWindow.miss)
                     {
-                        //Console.WriteLine("Auto miss");
+                       
                         Miss(PrecisionLevel.Miss, i, downNotes[i][0].shouldRewardPoints, true);
-                        
                     }
                 }
             }
@@ -138,10 +128,10 @@ namespace GXPEngine.Objects.Handlers
             {
                 if (upNotes[i].Count > 0)
                 {
-                    //Console.WriteLine("Beat offset: " + beatmapHandler.infiniteBeatmapTimer + BeatmapHandler.beatOffset);
-                    //Console.WriteLine("Upnote Window: " + upNotes[i][0].noteTime + (HitWindow.miss * 2));
-                    if (beatmapHandler.infiniteBeatmapTimer + BeatmapHandler.beatOffset > upNotes[i][0].noteTime + (HitWindow.miss * 2))
+                   
+                    if (beatmapHandler.infiniteBeatmapTimer > upNotes[i][0].noteTime - (1000 - beatmapHandler.BPM_calc) + (HitWindow.miss * 2))
                     {
+                   
                         Miss(PrecisionLevel.Miss, i, upNotes[i][0].shouldRewardPoints, false);
                        
                     }
@@ -176,12 +166,13 @@ namespace GXPEngine.Objects.Handlers
 
             if (checkingData.noteHit)
             {
-                DeleteDownNote(lane);
+                
                 if (checkingNote.shouldRewardPoints)
                 {
                     AddCombo();
-                    GivePoints(checkingData.precisionLevel, easyDraw);
+                    GivePoints(checkingData.precisionLevel, laneObject.scoreText);
                 }
+                DeleteDownNote(lane);
             }
             else
             {
@@ -207,7 +198,7 @@ namespace GXPEngine.Objects.Handlers
                 if (checkingNote.shouldRewardPoints)
                 {
                     AddCombo();
-                    GivePoints(checkingData.precisionLevel, easyDraw);
+                    GivePoints(checkingData.precisionLevel, laneObject.scoreText);
                 }
             }
             else
@@ -223,12 +214,12 @@ namespace GXPEngine.Objects.Handlers
 
         void BreakCombo()
         {
-            beatScore.BreakCombo(easyDraw);
+            beatScore.BreakCombo(laneObject.headerText);
         }
 
         void GivePoints(PrecisionLevel precisionLevel, EasyDraw easydraw)
         {
-            beatScore.AddScore(precisionLevel, easyDraw);
+            beatScore.AddScore(precisionLevel, laneObject.scoreText, laneObject.headerText);
         }
 
         void DeleteDownNote(int lane)
