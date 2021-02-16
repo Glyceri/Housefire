@@ -28,18 +28,19 @@ namespace GXPEngine.Objects
             laneObject.keyboardHook.KeyDown += new KeyboardHookCallback(OnKeyDown);
             laneObject.keyboardHook.KeyUp += new KeyboardHookCallback(OnKeyUp);
 
-            footerDead = new Bitmap("Note.png");
-            footerAlive = new Bitmap("NoteHit.png");
-            easyDraw = new EasyDraw(footerDead.Width, footerDead.Height, false);
-            easyDraw.TextSize(20);
+            footerDead = new Bitmap("BottomBarBack.png");
+            footerAlive = new Bitmap("BottomBarBackDead.png");
+            easyDraw = new EasyDraw(100,50, false);
+            easyDraw.TextSize(10);
             easyDraw.TextAlign(CenterMode.Center, CenterMode.Center);
 
             float footerWidth = easyDraw.width;
             float footerHeight = easyDraw.height;
 
-            easyDraw.SetOrigin(footerWidth / 2, footerHeight / 2);
-            easyDraw.rotation = 90;
-            easyDraw.scale = new Vector2(1, 2);
+            //easyDraw.SetOrigin(footerWidth / 3, footerHeight / 3);
+            //easyDraw.rotation = 90;
+            easyDraw.scale = new Vector2(laneObject.lanes[0].scaleX * 3, 2) ;
+            //easyDraw.scale = Vector2.One;
             DrawDead();
             AddChild(easyDraw);
         }
@@ -60,17 +61,27 @@ namespace GXPEngine.Objects
         {
             try
             {
-                easyDraw.Text(myKey.ToString().Split('_')[1], footerDead.Width / 2, footerDead.Height / 2);
+                if (myKey.ToString().Contains("_"))
+                {
+                    easyDraw.Text(myKey.ToString().Split('_')[1], 14, 8);
+                }
+                else
+                {
+                    easyDraw.Text(myKey.ToString(), 14, 8);
+                }
             }
             catch
             {
-                easyDraw.Text(myKey.ToString(), footerDead.Width / 2, footerDead.Height / 2);
+                easyDraw.Text(myKey.ToString(), 14, 8);
             }
         }
 
         protected override void OnDestroy()
         {
-
+            footerAlive?.Dispose();
+            footerAlive = null;
+            footerDead?.Dispose();
+            footerDead = null;
         }
 
         public void OnKeyUp(VKeys key)

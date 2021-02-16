@@ -20,7 +20,8 @@ namespace GXPEngine.Objects
             
             if (length > 0)
             {
-                height = -(int)(Lane.laneSize * ((float)length / 1000));
+                height = -(int)(Lane.laneSize * ((float)length / 1000)) + 11;
+                alpha = 0.2f;
             }
         }
     }

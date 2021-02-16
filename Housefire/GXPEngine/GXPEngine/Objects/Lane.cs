@@ -7,7 +7,8 @@ namespace GXPEngine.Objects
 {
     public class Lane : GameObject
     {
-        EasyDraw easyDraw;
+        public EasyDraw easyDraw;
+        EasyDraw backdrop;
         public Bitmap lane;
         public Bitmap laneBackground;
         public float laneOffset = 0;
@@ -24,7 +25,11 @@ namespace GXPEngine.Objects
             laneBackground = new Bitmap("LaneBackground.png");
             scale = new Vector2(1, 2f);
             easyDraw = new EasyDraw(lane.Width, lane.Height, false);
-            AddChild(easyDraw);
+            backdrop = new EasyDraw(lane.Width, lane.Height, false);
+            backdrop.DrawSprite(laneBackground, 0, 0, true);
+            backdrop.DrawSprite(lane, 0, 0, true);
+            AddChild(backdrop);
+            backdrop.AddChild(easyDraw);
         }
 
         public Lane(BeatmapHandler beatmapHandler, LaneObject laneObject, string customLane, bool flipped = false)
@@ -35,16 +40,22 @@ namespace GXPEngine.Objects
             laneBackground = new Bitmap("LaneBackground.png");
             scale = new Vector2(1, 2f);
             easyDraw = new EasyDraw(lane.Width, lane.Height, false);
-            AddChild(easyDraw);
+            backdrop = new EasyDraw(lane.Width, lane.Height, false);
+            backdrop.DrawSprite(laneBackground, 0, 0, true);
+            backdrop.DrawSprite(lane, 0, 0, true);
+            AddChild(backdrop);
+            backdrop.AddChild(easyDraw);
         }
 
 
         public void SpawnNode(int length, string noteImg = "Note.png")
         {
-            laneSize = lane.Height * scale.x * (1000 / (float)beatmapHandler.BPM_calc);
+            //laneSize = lane.Height * scale.x * (1 / (1000 / (float)BeatmapHandler.approachRate));
+            laneSize = lane.Height * scale.x * (1000/(float)beatmapHandler.BPM_calc);
             NoteObject obj = new NoteObject(length, noteImg);
             AddChild(obj);
             obj.SetXY(0, 0);
+            obj.personalCounter = 0;
         }
 
 
@@ -54,21 +65,26 @@ namespace GXPEngine.Objects
         {
             double yCalcualtion = beatmapHandler.BPM_calc == 0 ? 0 : beatmapHandler.oneSecondTimer / beatmapHandler.BPM_calc;
             easyDraw.Clear(Color.Transparent);
-            //easyDraw.DrawSprite(laneBackground, 0, yCalcualtion, true);
-            easyDraw.DrawSprite(laneBackground, 0, 0, true);
-            easyDraw.DrawSprite(lane, 0, 0, true);
-
 
             Vector2 oldScale = scale;
             foreach (NoteObject child in GetChildren(false).Where(a => a is NoteObject))
             {
                 child.visible = false;
 
-                child.personalCounter += Time.deltaTimeMiliseconds;
+                if ((BeatmapHandler.approachRate / (float)1000) >= 1)
+                {
+                    child.personalCounter += (int)(Time.deltaTimeMiliseconds);
+                }
+                else { 
+                    child.personalCounter += (int)(Time.deltaTimeMiliseconds * (BeatmapHandler.approachRate / (float)1000));
+                }
 
-                child.SetXY(child.x, lane.Height * scale.x * (float)(child.personalCounter / beatmapHandler.BPM_calc));
+                child.SetXY(child.x, (lane.Height * scale.x ) * (float)(child.personalCounter / beatmapHandler.BPM_calc));
 
-                easyDraw.DrawSprite(child.texture.bitmap, child.scale, 0, (float)(child.personalCounter / beatmapHandler.BPM_calc) * 8, false);
+ 
+                //* (1 / (1000 / (float)BeatmapHandler.approachRate))
+                float calcedOffset = ((float)((child.personalCounter * (BeatmapHandler.approachRate / (float)1000)) / beatmapHandler.BPM_calc ) * 8);
+                easyDraw.DrawSprite(child.texture.bitmap, child.scale, 0, calcedOffset, false);
                 
                 
                 scale = Vector2.One;
@@ -84,7 +100,6 @@ namespace GXPEngine.Objects
                 }
                 scale = oldScale;
             }
-
         }
 
         protected override void OnDestroy()

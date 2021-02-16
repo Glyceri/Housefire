@@ -1,4 +1,5 @@
 ﻿using GXPEngine.AddOns;
+using GXPEngine.Core;
 using GXPEngine.Objects.Handlers;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,11 @@ namespace GXPEngine.Objects
     {
 
         Sprite header;
+        public EasyDraw headerText;
+
+        public EasyDraw scoreBackdrop;
+        public EasyDraw scoreText;
+
         public List<Lane> lanes = new List<Lane>();
         List<Footer> footers = new List<Footer>();
 
@@ -31,23 +37,34 @@ namespace GXPEngine.Objects
         /// <param name="laneCount">Amount of lanes in this object</param>
         /// <param name="rotation">rotation of this object</param>
         /// <param name="bpm">beats per minute of this song</param>
-        public LaneObject(BeatmapHandler beatmapHandler, int laneCount, VKeys[] keyRegisters, bool flip = false)
+        public LaneObject(BeatmapHandler beatmapHandler, int laneCount, Player player, bool flip = false)
         {
             this.beatmapHandler = beatmapHandler;
             keyboardHook = new KeyboardHook();
             keyboardHook.Install();
 
             flipped = flip;
-            if (laneCount <= 0) laneCount = 1;
+            if (laneCount <= 3) laneCount = 4;
 
             scale = new Vector2(0.5f, 1f);
+            using (Bitmap bitmap = new Bitmap("round.png")) 
+            {
+                scoreBackdrop = new EasyDraw(bitmap.Width/4*3, bitmap.Height/4*3, false);
+                scoreBackdrop.DrawSprite(bitmap, new Vector2(scoreBackdrop.width/(float)bitmap.Width, scoreBackdrop.height/(float)bitmap.Height));
+                scoreText = new EasyDraw(scoreBackdrop.width, scoreBackdrop.height, false);
+                scoreText.SetXY(0, -5);
+                scoreText.collider = new BoxCollider(Vector2.Zero, new Vector2(scoreBackdrop.width, scoreBackdrop.height), scoreText);
+                scoreBackdrop.AddChild(scoreText);
+                MyGame.Instance.AddChild(scoreBackdrop);
+            }
+
             //AddDebugOrigin();
             for (int i = 0; i < laneCount; i++)
             {
                 AddLane(laneCount, i, flip);
                 try
                 {
-                    AddFooter(laneCount, i, keyRegisters[i], flip);
+                    AddFooter(laneCount, i, player.keybinds[laneCount -1][i], flip);
                 }
                 catch
                 {
@@ -57,7 +74,7 @@ namespace GXPEngine.Objects
             AddHeader(laneCount);
            
 
-            beatmapScoring = new BeatmapScoring(beatmapHandler, this, keyRegisters);
+            beatmapScoring = new BeatmapScoring(beatmapHandler, this, player);
         }
 
         void AddDebugOrigin()
@@ -69,10 +86,16 @@ namespace GXPEngine.Objects
 
         void AddHeader(int laneCount)
         {
-            header = new Sprite("Note.png", true, false);
+            Sprite headerold = new Sprite("OldUI/Note.png", false, false);
+            header = new Sprite("round.png", true, false);
             AddChild(header);
-            header.SetOrigin(header.width / 2, header.height);
-            header.scale = new Vector2(laneCount, scale.x * 1.3f);
+            header.SetOrigin(header.width / 2, header.height / 4 * 3);
+            header.scale = new Vector2((headerold.width / (float)header.width) * laneCount, scale.x * 1.3f);
+
+            headerText = new EasyDraw(header.width, header.height, false);
+            headerText.collider = new BoxCollider(Vector2.Zero, new Vector2(header.width, header.height), headerText);
+            headerText.Move(- (header.width / 2), - (header.height / 4 * 3) - 20);
+            header.AddChild(headerText);
         }
 
         void AddLane(int laneCount, int i, bool flip)
@@ -81,11 +104,16 @@ namespace GXPEngine.Objects
             if(i == 0)
             {
                 lanes.Add(new Lane(beatmapHandler, this, "LaneLeftSide.png"));
-            }else if(i == laneCount - 1)
+                //lanes.Add(new Lane(beatmapHandler, this, "Lane.png"));
+            }
+            else if(i == laneCount - 1)
             {
                 lanes.Add(new Lane(beatmapHandler, this, "LaneRightSide.png"));
-            }else
+                //lanes.Add(new Lane(beatmapHandler, this, "Lane2.png"));
+            }
+            else
             {
+                //lanes.Add(new Lane(beatmapHandler, this, "Lane3.png"));
                 lanes.Add(new Lane(beatmapHandler, this, "LaneMiddle.png"));
             }
             AddChild(lanes[i]);
@@ -99,8 +127,9 @@ namespace GXPEngine.Objects
             footers.Add(new Footer(key, this));
             
             float footerWidth = footers[i].footerDead.Width;
-            if(!flip) footers[i].SetXY(((i * footerWidth) - ((footerWidth / 2) * laneCount) + (footerWidth / 2)) * lanes[i].scaleX, (lanes[i].lane.Height * lanes[i].scaleY) + (footerWidth / 2));
-            else footers[i].SetXY(((footerWidth / 2 * laneCount) - ((i + 1) * footerWidth) + footerWidth / 2) * lanes[i].scaleX,    (lanes[i].lane.Height * lanes[i].scaleY) + (footerWidth / 2));
+            footers[i].SetXY(i * (lanes[0].easyDraw.width ) - (lanes[0].easyDraw.width * (laneCount/(float)2)), (lanes[i].lane.Height * lanes[i].scaleY) );
+            //if(!flip) footers[i].SetXY(((i * footerWidth) - ((footerWidth / 2) * laneCount) + (footerWidth / 2)) * lanes[i].scaleX, (lanes[i].lane.Height * lanes[i].scaleY) + (footerWidth / 2));
+            //else footers[i].SetXY(((footerWidth / 2 * laneCount) - ((i + 1) * footerWidth) + footerWidth / 2) * lanes[i].scaleX,    (lanes[i].lane.Height * lanes[i].scaleY) + (footerWidth / 2));
             AddChild(footers[i]); 
         }
 
@@ -113,7 +142,7 @@ namespace GXPEngine.Objects
 
             for(int i = 0; i < footers.Count; i++)
             {
-                footers[i].easyDraw.Mirror(rotation > 0 && rotation < 180, rotation > 0 && rotation < 180);
+                //footers[i].easyDraw.Mirror(rotation > 0 && rotation < 180, rotation > 0 && rotation < 180);
             }
 
             beatmapScoring.CheckForHits();

@@ -68,8 +68,7 @@ namespace GXPEngine.Objects
                 scorePanelText = new EasyDraw(scorePanel.width, scorePanel.height, false);
                 scorePanel.AddChild(scorePanelText);
 
-                collider = new BoxCollider(Vector2.Zero, new Vector2(oldResolution.x, oldResolution.y), this);
-                collider.isTrigger = true;
+                
 
                 colourThing.Dispose();
                 scoreBitmap.Dispose();
@@ -82,6 +81,9 @@ namespace GXPEngine.Objects
                 scorePanelText.collider = new BoxCollider(Vector2.Zero, new Vector2(scorePanelText.width, scorePanelText.height), scorePanelText);
                 //--------
 
+
+                collider = new BoxCollider(Vector2.Zero, new Vector2(oldResolution.x, oldResolution.y), this);
+                collider.isTrigger = true;
 
                 oldResolution = new Vector2(width, height);
             }
