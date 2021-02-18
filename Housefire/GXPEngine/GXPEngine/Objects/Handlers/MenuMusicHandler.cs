@@ -184,7 +184,8 @@ namespace GXPEngine.Objects.Handlers
 
         void RestartMusic()
         {
-            if (findNew && (music?.disposed ?? true) && !(MyGame.Instance.beatmapHandler?.isPlaying ?? true))
+            if (findNew && (music?.disposed ?? true) //&& !(MyGame.Instance.beatmapHandler?.isPlaying ?? true))
+                )
             {
                 LoadMusic(musicName);
                 music?.Play();
