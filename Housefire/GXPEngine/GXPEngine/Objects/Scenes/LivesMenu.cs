@@ -115,7 +115,7 @@ namespace GXPEngine.Objects.Scenes
             roundsPanelText.Clear(Color.Transparent);
             roundsPanelText.TextSize(22);
             roundsPanelText.TextAlign(CenterMode.Center, CenterMode.Center);
-            roundsPanelText.Text(MyGame.roundsRemaining.ToString() + " rounds remaining", roundsPanelText.width / 2, roundsPanelText.height / 2);
+            roundsPanelText.Text(MyGame.roundsRemaining != 1 ? MyGame.roundsRemaining.ToString() + " Rounds Remaining" : "1 Round Remaining", roundsPanelText.width / 2, roundsPanelText.height / 2);
         }
     }
 }
