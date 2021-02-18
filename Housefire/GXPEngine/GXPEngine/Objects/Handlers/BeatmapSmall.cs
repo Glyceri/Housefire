@@ -16,6 +16,7 @@ namespace GXPEngine.Objects.Handlers
         public string background = "";
         public int lanes = -1;
         public int BPM = -1;
+        public int actualbpm = -1;
         public int offset = 0;
         public string name = "Song!";
         public int notesAmount = 0;
@@ -164,7 +165,7 @@ namespace GXPEngine.Objects.Handlers
 
         void ReadLines()
         {
-            if      (line.Contains(failedValue = "bpm="))               BPM         = int.Parse(line.Split('=')[1]);
+            if      (line.StartsWith(failedValue = "bpm="))             BPM         = int.Parse(line.Split('=')[1]);
             else if (line.Contains(failedValue = "music="))             music       = beatmapFile + @"\..\" + line.Split('=')[1];
             else if (line.Contains(failedValue = "lanes="))             lanes       = int.Parse(line.Split('=')[1]);
             else if (line.Contains(failedValue = "background="))        background  = beatmapFile + @"\..\" + line.Split('=')[1];
@@ -174,6 +175,7 @@ namespace GXPEngine.Objects.Handlers
             else if (line.Contains(failedValue = "menutime="))          startTime   = int.Parse(line.Split('=')[1]);
             else if (line.Contains(failedValue = "difficulty="))        difficulty  = int.Parse(line.Split('=')[1]);
             else if (line.Contains(failedValue = "internal="))          internalName= line.Split('=')[1];
+            else if (line.Contains(failedValue = "actualbpm="))         actualbpm   = int.Parse(line.Split('=')[1]);
         }
     }
 }
