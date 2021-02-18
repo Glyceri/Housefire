@@ -122,7 +122,7 @@ namespace GXPEngine.Core
 
             GL.glfwOpenWindowHint(GL.GLFW_FSAA_SAMPLES, 8);
             GL.glfwOpenWindow(realWidth, realHeight, 8, 8, 8, 8, 24, 0, (fullScreen ? GL.GLFW_FULLSCREEN : GL.GLFW_WINDOWED));
-            GL.glfwSetWindowTitle("Game");
+            GL.glfwSetWindowTitle("RoboRhythm");
             GL.glfwSwapInterval(vSync);
 
             GL.glfwSetKeyCallback(
@@ -289,7 +289,7 @@ namespace GXPEngine.Core
             _owner.Render(this);
 
             try { GL.glfwSwapBuffers(); } catch { Console.WriteLine("Swapping buffers failed!"); }
-            if (GetKey(Key.ESCAPE)) this.Close();
+            //if (GetKey(Key.ESCAPE)) this.Close();
         }
 
         //------------------------------------------------------------------------------------------------------------------------
