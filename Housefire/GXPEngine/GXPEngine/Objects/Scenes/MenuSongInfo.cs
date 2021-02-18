@@ -209,6 +209,7 @@ namespace GXPEngine.Objects.Scenes
                         startupVolume = AudioHandler.volume;
                          timer = 0;
                         countdown = 0;
+                        new Sound("soft-hitnormal.wav")?.Play(false, 0, AudioHandler.volume / (float)100);
                     }
                 }
             }
