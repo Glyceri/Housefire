@@ -17,6 +17,11 @@ namespace GXPEngine.Objects
         Sprite header;
         public EasyDraw headerText;
 
+        public EasyDraw comboBackdrop;
+        public EasyDraw comboText;
+
+        public EasyDraw sideThing;
+
         public EasyDraw scoreBackdrop;
         public EasyDraw scoreText;
 
@@ -30,6 +35,8 @@ namespace GXPEngine.Objects
         public KeyboardHook keyboardHook;
         public BeatmapScoring beatmapScoring;
 
+
+        EasyDraw livesPanelText;
 
         /// <summary>
         /// Spawn a lane object that will handle inputs and spawning of notes and all that jazz.
@@ -47,15 +54,97 @@ namespace GXPEngine.Objects
             if (laneCount <= 3) laneCount = 4;
 
             scale = new Vector2(0.5f, 1f);
-            using (Bitmap bitmap = new Bitmap("round.png")) 
+
+          
+
+            using (Bitmap bitmap = new Bitmap("extrathings/sidething.png"))
             {
+                sideThing = new EasyDraw(bitmap.Width, bitmap.Height, false);
+                sideThing.scale *= new Vector2(0.85f, 0.85f);
+               
+
+                if (!flip)
+                {
+                    sideThing.SetXY(-540 * 2, -60);
+                    //sideThing.SetXY(-460 * 2, 160);
+                    sideThing.DrawSprite(bitmap, new Vector2(sideThing.width / (float)bitmap.Width, sideThing.height / (float)bitmap.Height));
+                    
+                }
+                else
+                {
+                    sideThing.DrawSprite(bitmap, new Vector2(-(sideThing.width / (float)bitmap.Width), sideThing.height / (float)bitmap.Height), 2);
+                    sideThing.SetXY(880, -60);
+                }
+
+                AddChild(sideThing);
+            }
+
+            using (Bitmap bitmap = new Bitmap("extrathings/combobaracctivated.png"))
+            {
+                livesPanelText = new EasyDraw(bitmap.Width / 4 * 3, bitmap.Height / 4 * 3, false);
+                livesPanelText.collider = new BoxCollider(Vector2.Zero, new Vector2(bitmap.Width / 4 * 3, bitmap.Height / 4 * 3), livesPanelText);
+                livesPanelText.Clear(Color.Transparent);
+                using (Bitmap bit = new Bitmap("ui/Healthbar.png")) {
+                    if (!flip)
+                    {
+                        livesPanelText.SetXY(-470 * 2, -100);
+                        livesPanelText.DrawSprite(bit, new Vector2(livesPanelText.width / (float)bit.Width, livesPanelText.height / (float)bit.Height));
+
+                        if (MyGame.Instance.player1.health >= 1) using (Bitmap hp1 = new Bitmap("UI/Health/1hp.png"))
+                        livesPanelText.DrawSprite(hp1, new Vector2(livesPanelText.width / (float)hp1.Width, livesPanelText.height / (float)hp1.Height));
+
+                        if (MyGame.Instance.player1.health >= 2) using (Bitmap hp1 = new Bitmap("UI/Health/2Hp.png"))
+                        livesPanelText.DrawSprite(hp1, new Vector2((livesPanelText.width / (float)hp1.Width), livesPanelText.height / (float)hp1.Height));
+
+                        if (MyGame.Instance.player1.health >= 3) using (Bitmap hp1 = new Bitmap("UI/Health/Full Hp.png"))
+                        livesPanelText.DrawSprite(hp1, new Vector2((livesPanelText.width / (float)hp1.Width), livesPanelText.height / (float)hp1.Height));
+                    }
+                    else
+                    {
+                        livesPanelText.DrawSprite(bit, new Vector2(-(livesPanelText.width / (float)bit.Width), livesPanelText.height / (float)bit.Height), 2);
+                        livesPanelText.SetXY(510, -100);
+
+                        if (MyGame.Instance.player2.health >= 1) using (Bitmap hp1 = new Bitmap("UI/Health/1hp.png"))
+                        livesPanelText.DrawSprite(hp1, new Vector2(-(livesPanelText.width / (float)hp1.Width), livesPanelText.height / (float)hp1.Height), 2);
+
+                        if (MyGame.Instance.player2.health >= 2) using (Bitmap hp1 = new Bitmap("UI/Health/2Hp.png"))
+                        livesPanelText.DrawSprite(hp1, new Vector2(-(livesPanelText.width / (float)hp1.Width), livesPanelText.height / (float)hp1.Height), 2);
+
+                        if (MyGame.Instance.player2.health >= 3) using (Bitmap hp1 = new Bitmap("UI/Health/Full Hp.png"))
+                        livesPanelText.DrawSprite(hp1, new Vector2(-(livesPanelText.width / (float)hp1.Width), livesPanelText.height / (float)hp1.Height), 2);
+                    }
+
+                    AddChild(livesPanelText);
+                }
+
+
                 scoreBackdrop = new EasyDraw(bitmap.Width/4*3, bitmap.Height/4*3, false);
                 scoreBackdrop.DrawSprite(bitmap, new Vector2(scoreBackdrop.width/(float)bitmap.Width, scoreBackdrop.height/(float)bitmap.Height));
                 scoreText = new EasyDraw(scoreBackdrop.width, scoreBackdrop.height, false);
                 scoreText.SetXY(0, -5);
                 scoreText.collider = new BoxCollider(Vector2.Zero, new Vector2(scoreBackdrop.width, scoreBackdrop.height), scoreText);
                 scoreBackdrop.AddChild(scoreText);
-                MyGame.Instance.AddChild(scoreBackdrop);
+
+                comboBackdrop = new EasyDraw(scoreBackdrop.width, scoreBackdrop.height, false);
+                comboBackdrop.DrawSprite(bitmap, new Vector2(comboBackdrop.width / (float)bitmap.Width, comboBackdrop.height / (float)bitmap.Height));
+                comboText = new EasyDraw(comboBackdrop.width, comboBackdrop.height, false);
+                //comboText.SetXY(0, -5);
+                comboText.collider = new BoxCollider(Vector2.Zero, new Vector2(comboBackdrop.width, comboBackdrop.height), comboText);
+                comboBackdrop.AddChild(comboText);
+
+                if (!flip)
+                {
+                    scoreBackdrop.SetXY(-460 *2, 50);
+                    comboBackdrop.SetXY(-470 * 2, 190);
+                }
+                else
+                {
+                    scoreBackdrop.SetXY(480, 50);
+                    comboBackdrop.SetXY(500, 190);
+                }
+
+                AddChild(scoreBackdrop);
+                AddChild(comboBackdrop);
             }
 
             //AddDebugOrigin();
@@ -71,7 +160,7 @@ namespace GXPEngine.Objects
                     AddFooter(laneCount, i, VKeys.NONAME, flip);
                 }
             }
-            AddHeader(laneCount);
+            AddHeader(laneCount, player);
            
 
             beatmapScoring = new BeatmapScoring(beatmapHandler, this, player);
@@ -84,37 +173,62 @@ namespace GXPEngine.Objects
             AddChild(debugOrigin);
         }
 
-        void AddHeader(int laneCount)
+        void AddHeader(int laneCount, Player player)
         {
             Sprite headerold = new Sprite("OldUI/Note.png", false, false);
-            header = new Sprite("round.png", true, false);
+            header = new Sprite("extrathings/combotbarbasic.png", true, false);
             AddChild(header);
-            header.SetOrigin(header.width / 2, header.height / 4 * 3);
+
+            header.SetOrigin(header.width / 2, header.height);
             header.scale = new Vector2((headerold.width / (float)header.width) * laneCount, scale.x * 1.3f);
 
             headerText = new EasyDraw(header.width, header.height, false);
             headerText.collider = new BoxCollider(Vector2.Zero, new Vector2(header.width, header.height), headerText);
-            headerText.Move(- (header.width / 2), - (header.height / 4 * 3) - 20);
+            headerText.Move(- (header.width / 2), - (header.height *1.25f) );
+            headerText.TextSize(50);
+            headerText.TextAlign(CenterMode.Center, CenterMode.Center);
+            headerText.Text(player.name, headerText.width / 2, headerText.height / 2);
             header.AddChild(headerText);
         }
 
         void AddLane(int laneCount, int i, bool flip)
         {
-            
-            if(i == 0)
+            if (!flip)
             {
-                lanes.Add(new Lane(beatmapHandler, this, "LaneLeftSide.png"));
-                //lanes.Add(new Lane(beatmapHandler, this, "Lane.png"));
-            }
-            else if(i == laneCount - 1)
-            {
-                lanes.Add(new Lane(beatmapHandler, this, "LaneRightSide.png"));
-                //lanes.Add(new Lane(beatmapHandler, this, "Lane2.png"));
+                if (i == 0)
+                {
+                    lanes.Add(new Lane(beatmapHandler, this, "LaneLeftSide.png"));
+                    //lanes.Add(new Lane(beatmapHandler, this, "Lane.png"));
+                }
+                else if (i == laneCount - 1)
+                {
+                    lanes.Add(new Lane(beatmapHandler, this, "LaneRightSide.png"));
+                    //lanes.Add(new Lane(beatmapHandler, this, "Lane2.png"));
+                }
+                else
+                {
+                    //lanes.Add(new Lane(beatmapHandler, this, "Lane3.png"));
+                    lanes.Add(new Lane(beatmapHandler, this, "LaneMiddle.png"));
+                }
             }
             else
             {
-                //lanes.Add(new Lane(beatmapHandler, this, "Lane3.png"));
-                lanes.Add(new Lane(beatmapHandler, this, "LaneMiddle.png"));
+                if (i == 0)
+                {
+                    lanes.Add(new Lane(beatmapHandler, this, "LaneRightSide.png"));
+                    //lanes.Add(new Lane(beatmapHandler, this, "Lane.png"));
+                }
+                else if (i == laneCount - 1)
+                {
+                    
+                    lanes.Add(new Lane(beatmapHandler, this, "LaneLeftSide.png"));
+                    //lanes.Add(new Lane(beatmapHandler, this, "Lane2.png"));
+                }
+                else
+                {
+                    //lanes.Add(new Lane(beatmapHandler, this, "Lane3.png"));
+                    lanes.Add(new Lane(beatmapHandler, this, "LaneMiddle.png"));
+                }
             }
             AddChild(lanes[i]);
             int laneWidth = lanes[i].lane.Width;
