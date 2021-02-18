@@ -33,19 +33,8 @@ namespace GXPEngine.Objects.Handlers
         List<VKeys> validKeys;
         List<bool> hasGoneUp;
 
-        //EasyDraw easyDraw = new EasyDraw(500, 400, false);
-
-        Player player;
-
         public BeatmapScoring(BeatmapHandler beatmapHandler, LaneObject laneObject, Player player)
         {
-            this.player = player;
-            //laneObject.AddChild(easyDraw);
-            //easyDraw.TextSize(60);
-            //easyDraw.SetColor(200, 200, 200);
-           // easyDraw.TextAlign(CenterMode.Min, CenterMode.Min);
-            //easyDraw.SetXY(((int)Mathf.Floor(laneObject.lanes.Count / 2)) * 100, 0);
-
             SetupThis(beatmapHandler, laneObject, player.keybinds[laneObject.lanes.Count -1]);
             SetupGoneUp(player.keybinds[laneObject.lanes.Count - 1]);
             SetupKeyboardHook(laneObject);
@@ -214,12 +203,12 @@ namespace GXPEngine.Objects.Handlers
 
         void BreakCombo()
         {
-            beatScore.BreakCombo(laneObject.headerText);
+            beatScore.BreakCombo(laneObject.comboText);
         }
 
         void GivePoints(PrecisionLevel precisionLevel, EasyDraw easydraw)
         {
-            beatScore.AddScore(precisionLevel, laneObject.scoreText, laneObject.headerText);
+            beatScore.AddScore(precisionLevel, laneObject.scoreText, laneObject.comboText);
         }
 
         void DeleteDownNote(int lane)
