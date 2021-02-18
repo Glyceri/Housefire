@@ -81,6 +81,9 @@ namespace GXPEngine.Objects.Scenes
 
             robotOneWin.visible = false;
             robotTwoWin.visible = false;
+
+            robotOneHolder.SetXY(230, 260);
+            robotTwoHolder.SetXY(1260, 260);
         }
 
 
