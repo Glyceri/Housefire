@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using static GXPEngine.AddOns.KeyboardHook;
 using GXPEngine.Objects.Handlers.Data;
 using GXPEngine.Objects.Enums;
+using GXPEngine.Core.Audio;
+using System.Threading;
+using System.Drawing;
 
 namespace GXPEngine.Objects.Handlers
 {
@@ -32,6 +35,8 @@ namespace GXPEngine.Objects.Handlers
 
         List<VKeys> validKeys;
         List<bool> hasGoneUp;
+
+        List<Sound> audioFiles = new List<Sound>();
 
         public BeatmapScoring(BeatmapHandler beatmapHandler, LaneObject laneObject, Player player)
         {
@@ -77,11 +82,28 @@ namespace GXPEngine.Objects.Handlers
                 {
                     if (tempNotes[i].lane == valids)
                     {
-                        downNotes[valids].Add(new CheckingNote(tempNotes[i].hitTime, true));
-                        upNotes[valids].Add(new CheckingNote(tempNotes[i].hitTime, false));
-                        if (tempNotes[i].length > 0)
+                        downNotes[valids].Add(new CheckingNote(tempNotes[i].hitTime, true, tempNotes[i].hitSound));
+                        upNotes[valids].Add(new CheckingNote(tempNotes[i].hitTime, false, ""));
+                        bool contains = false;
+                        foreach(Sound sound in audioFiles)
                         {
-                            upNotes[valids].Add(new CheckingNote(tempNotes[i].hitTime + tempNotes[i].length, true));
+                            if(sound.fileName == tempNotes[i].hitSound)
+                            {
+                                contains = true;
+                            }
+                        }
+                        if (!contains)
+                        {
+                            try
+                            {
+                                audioFiles.Add(new Sound(tempNotes[i].hitSound));
+                            }
+                            catch { }
+                        }
+
+                        if (tempNotes[i].length > 200)
+                        {
+                            upNotes[valids].Add(new CheckingNote(tempNotes[i].hitTime + tempNotes[i].length, true,""));
                         }
                     }
                 }
@@ -144,6 +166,7 @@ namespace GXPEngine.Objects.Handlers
         public void KeyboardKeyDown(VKeys key)
         {
 
+
             if (!validKeys.Contains(key)) return;
             int lane = validKeys.IndexOf(key);
             if (downNotes[lane].Count <= 0 || !hasGoneUp[lane]) return;
@@ -159,7 +182,7 @@ namespace GXPEngine.Objects.Handlers
                 if (checkingNote.shouldRewardPoints)
                 {
                     AddCombo();
-                    GivePoints(checkingData.precisionLevel, laneObject.scoreText);
+                    GivePoints(checkingData.precisionLevel, laneObject.scoreText, checkingNote.noteHitsound);
                 }
                 DeleteDownNote(lane);
             }
@@ -187,7 +210,7 @@ namespace GXPEngine.Objects.Handlers
                 if (checkingNote.shouldRewardPoints)
                 {
                     AddCombo();
-                    GivePoints(checkingData.precisionLevel, laneObject.scoreText);
+                    GivePoints(checkingData.precisionLevel, laneObject.scoreText, checkingNote.noteHitsound);
                 }
             }
             else
@@ -203,13 +226,34 @@ namespace GXPEngine.Objects.Handlers
 
         void BreakCombo()
         {
+            laneObject.SetText("Miss", Color.Red);
             beatScore.BreakCombo(laneObject.comboText);
         }
 
-        void GivePoints(PrecisionLevel precisionLevel, EasyDraw easydraw)
+        void GivePoints(PrecisionLevel precisionLevel, EasyDraw easydraw, string hitsound)
         {
+            if (hitsound != "")
+            {
+                try
+                {
+                    if (hitsound != "")
+                    {
+                        foreach (Sound sound in audioFiles)
+                        {
+                            if (sound.fileName == hitsound) { sound?.Play(false, 0, AudioHandler.volume / (float)120); break; }
+
+                        }
+                    }
+                }
+                catch
+                {
+
+                }
+            }
             beatScore.AddScore(precisionLevel, laneObject.scoreText, laneObject.comboText);
+            laneObject.SetText(precisionLevel.ToString(), precisionLevel == PrecisionLevel.Just ? Color.Black : precisionLevel == PrecisionLevel.Okay ? Color.Blue : precisionLevel == PrecisionLevel.Good ? Color.Green : Color.Gold);
         }
+
 
         void DeleteDownNote(int lane)
         {
@@ -235,6 +279,7 @@ namespace GXPEngine.Objects.Handlers
 
             downNotes = null;
             upNotes = null;
+            audioFiles = null;
         }
     }
 }
