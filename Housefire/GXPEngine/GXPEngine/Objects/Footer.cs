@@ -47,12 +47,14 @@ namespace GXPEngine.Objects
 
         void DrawAlive()
         {
+            easyDraw.Clear(Color.Transparent);
             easyDraw.DrawSprite(footerAlive);
             DrawKey();
         }
 
         void DrawDead()
         {
+            easyDraw.Clear(Color.Transparent);
             easyDraw.DrawSprite(footerDead);
             DrawKey();
         }
@@ -102,14 +104,11 @@ namespace GXPEngine.Objects
             }
         }
 
-
-
         float stayOnTime = 0;
         bool shouldCount = false;
 
         void Update()
         {
-
             if(stayOnTime >= 0 && shouldCount)
             {
                 stayOnTime -= Time.deltaTime;
