@@ -65,9 +65,6 @@ namespace GXPEngine.Objects.Handlers
 
             DrawCombo(headerText);
             DrawScore(scoreText);
-
-
-
         }
     }
 }
