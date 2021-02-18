@@ -131,6 +131,10 @@ namespace GXPEngine.Objects.Handlers
                                 note.lane = int.Parse(csl[0]);
                                 note.hitTime = csl[1].Contains("-") ? -1 : int.Parse(csl[1]);
                                 note.length = csl[2].Contains("-") ? -1 : int.Parse(csl[2]) - note.hitTime;
+                                if (csl.Length == 4 && line.Contains(".wav"))
+                                {
+                                    note.hitSound = beatmapFile + @"\..\" + csl[3];
+                                }
                                 notes.Add(note);
                             }
                             catch
