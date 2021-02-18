@@ -14,7 +14,7 @@ public class MyGame : Game
 	public static MyGame Instance;
     public static bool drawCollision = false;       //Debug draw collision?
 
-    public static int roundsRemaining = 3;
+    public static int roundsRemaining = 5;
 
     public MainMenuScreen menuScreen;
 
@@ -26,6 +26,8 @@ public class MyGame : Game
 
     public Player player1;
     public Player player2;
+
+    public RobotMenu robotMenu;
 
     public HighscoreHandler highscorehandler;
 
@@ -39,11 +41,11 @@ public class MyGame : Game
         highscorehandler.ReadHighscores();
 
         musicHandler = new MenuMusicHandler();
-        //menuOverlay = new MenuOverlay();
         menuScreen = new MainMenuScreen();
         playerMenu = new PlayerMenu();
         menuScores = new MenuScores();
         livesMenu = new LivesMenu();
+        robotMenu = new RobotMenu();
 
         AddChild(menuScreen);
         AddChild(livesMenu);
@@ -57,6 +59,8 @@ public class MyGame : Game
         //AddChild(menuOverlay);
         AddChild(playerMenu);
         AddChild(coinMenu);
+
+        AddChild(robotMenu);
 
         AddChild(menuScores);
         AddChild(musicHandler);
@@ -84,7 +88,7 @@ public class MyGame : Game
 
     void OnStartup()
     {
-        roundsRemaining = 3;
+        roundsRemaining = 5;
         menuScores.visible = false;
         menuScores.canBeInteractedWith = false;
         playerMenu.visible = true;
@@ -95,6 +99,7 @@ public class MyGame : Game
         coinMenu.canBeInteractedWith = true;
         player1 = new Player(1);
         player2 = new Player(2);
+        playerMenu.Deselect();
     }
 
     void OnCoinAnimationEnd()
@@ -115,8 +120,6 @@ public class MyGame : Game
     {
         beatmapHandler?.Stop();
         beatmapHandler = new BeatmapHandler(name);
-        //beatmapHandler.activeBeatmap?.WriteDebug();
-        //beatmapHandler?.Play();
     }
 
     public void StartBeatMap(BeatmapSmall beatmap)
@@ -124,13 +127,25 @@ public class MyGame : Game
       
         beatmapHandler?.Stop();
         beatmapHandler = new BeatmapHandler(beatmap);
-        //beatmapHandler.activeBeatmap?.WriteDebug();
-        //beatmapHandler?.Play();
     }
 
     void Update()
 	{
         counter += Time.deltaTime;
+
+        if (Input.GetKeyDown(Key.P))
+        {
+            OsuToBeatConverter.ConvertFile(4);
+        }
+
+        if (Input.GetKeyDown(Key.ESCAPE))
+        {
+            if(!beatmapHandler?.isPlaying ?? true)
+            {
+                LateDestroy();
+            }
+        }
+
 
         if (!playerMenu.inEditMode && (!beatmapHandler?.isPlaying ?? false))
         {
@@ -139,10 +154,7 @@ public class MyGame : Game
                 beatmapHandler?.Play();
             }
 
-            if (Input.GetKeyDown(Key.P))
-            {
-                OsuToBeatConverter.ConvertFile(4);
-            }
+            
 
             if (Input.GetKeyDown(Key.BACKSPACE))
             {
@@ -173,13 +185,8 @@ public class MyGame : Game
             {
                 menuScreen.menuScreen.visible = !menuScreen.menuScreen.visible;
             }
-            if (Input.GetKeyDown(Key.Y))
-            {
-                //oldSong = beatmapHandler?.Stop(true);
-
-            }
-         
         }
+
         if (Input.GetKeyDown(Key.U))
         {
             if(beatmapHandler != null)

@@ -106,14 +106,14 @@
     <Compile Include="GXPEngine\Objects\BeatmapButtonEasyDraw.cs" />
     <Compile Include="GXPEngine\Objects\Enums\HitWindow.cs" />
     <Compile Include="GXPEngine\Objects\Footer.cs" />
-    <Compile Include="GXPEngine\Objects\Handlers\BeatmapOld2.cs" />
+    <Compile Include="GXPEngine\Graveyard\BeatmapOld2.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\BeatmapButtonHandler.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\BeatmapHandler.cs" />
     <Compile Include="GXPEngine\Graveyard\BeatmapHandlerOld.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\BeatmapPlayer.cs" />
     <Compile Include="GXPEngine\Graveyard\BeatmapPlayerOld.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\BeatmapScoring.cs" />
-    <Compile Include="GXPEngine\Objects\Handlers\BeatmapScoringNew.cs" />
+    <Compile Include="GXPEngine\Graveyard\BeatmapScoringNew.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\BeatmapSmall.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\BeatScore.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\Data\CheckingData.cs" />
@@ -141,6 +141,7 @@
     <Compile Include="GXPEngine\Objects\Scenes\MenuSongInfo.cs" />
     <Compile Include="GXPEngine\Objects\Scenes\MenuWalker.cs" />
     <Compile Include="GXPEngine\Objects\Scenes\PlayerMenu.cs" />
+    <Compile Include="GXPEngine\Objects\Scenes\RobotMenu.cs" />
     <Compile Include="MyGame.cs" />
     <Compile Include="GXPEngine\Canvas.cs" />
     <Compile Include="GXPEngine\Game.cs" />
