@@ -14,9 +14,6 @@ namespace GXPEngine.Objects.Handlers.Data
 
         public CheckingData(int noteTime, int hitTime, BeatmapHandler beatmapHandler)
         {
-            //hitTime -= (int)(beatmapHandler.BPM_calc / 4) - (int)(beatmapHandler.activeBeatmap.offset/4);
-            
-            //hitTime -= (int)(1000 - beatmapHandler.BPM_calc);
             noteTime -= (int)(1000 - beatmapHandler.BPM_calc);
 
             noteTime += BeatmapHandler.beatOffset;
