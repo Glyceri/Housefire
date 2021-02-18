@@ -1,4 +1,5 @@
 ﻿using GXPEngine.Core;
+using GXPEngine.Core.Audio;
 using GXPEngine.Objects.Handlers;
 using System;
 using System.Collections.Generic;
@@ -88,7 +89,7 @@ namespace GXPEngine.Objects.Scenes
             onePlayerButton.alpha = 1f;
             onePlayerButton.TextAlign(CenterMode.Center, CenterMode.Center);
             onePlayerButton.TextSize(30);
-            onePlayerButton.Text("Controls: \n D F J K", 300, 500);
+            onePlayerButton.Text("Controls: \n A S F G", 300, 500);
 
             onePlayerButton.SetXY(160, 140);
             AddChild(onePlayerButton);
@@ -103,7 +104,7 @@ namespace GXPEngine.Objects.Scenes
             twoPlayersButton.alpha = 1f;
             twoPlayersButton.TextAlign(CenterMode.Center, CenterMode.Center);
             twoPlayersButton.TextSize(30);
-            twoPlayersButton.Text("            Controls: \n LEFT UP DOWN RIGHT", 300, 500);
+            twoPlayersButton.Text("Controls: \n H J K ;", 300, 500);
 
             twoPlayersButton.SetXY(1920 - 160 - 600, 140);
             AddChild(twoPlayersButton);
@@ -205,6 +206,7 @@ namespace GXPEngine.Objects.Scenes
                     {
                         inEndingAnimation = true;
                         canBeInteractedWith = false;
+                        new Sound("soft-hitnormal.wav")?.Play(false, 0, AudioHandler.volume/(float)100);
                     }
                 }
             }
@@ -272,6 +274,8 @@ namespace GXPEngine.Objects.Scenes
             }
         }
 
+        bool hasExited = true;
+
         void CheckEditMode()
         {
             if (Input.GetMouseButtonDown(0))
@@ -288,6 +292,7 @@ namespace GXPEngine.Objects.Scenes
                         inEditMode = true;
                         textplayerTwoEasyDraw.Clear(Color.Transparent);
                         textplayerTwoEasyDraw.Text(MyGame.Instance.player2.name, textplayerTwoEasyDraw.width / 2, textplayerTwoEasyDraw.height / 2);
+                        new Sound("soft-hitnormal.wav")?.Play(false, 0, AudioHandler.volume / (float)100);
                     }
 
                 }
@@ -301,6 +306,7 @@ namespace GXPEngine.Objects.Scenes
                         inEditMode = true;
                         textplayeroneEasyDraw.Clear(Color.Transparent);
                         textplayeroneEasyDraw.Text(MyGame.Instance.player1.name, textplayeroneEasyDraw.width / 2, textplayeroneEasyDraw.height / 2);
+                        new Sound("soft-hitnormal.wav")?.Play(false, 0, AudioHandler.volume / (float)100);
                     }
                 }
                 if (!hit)
