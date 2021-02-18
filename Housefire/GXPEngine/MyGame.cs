@@ -11,10 +11,10 @@ using GXPEngine.Core.Audio;
 
 public class MyGame : Game
 {
-	public static MyGame Instance;
+    public static MyGame Instance;
     public static bool drawCollision = false;       //Debug draw collision?
 
-    public static int roundsRemaining = 5;
+    public static int roundsRemaining = 3;
 
     public MainMenuScreen menuScreen;
 
@@ -27,14 +27,16 @@ public class MyGame : Game
     public Player player1;
     public Player player2;
 
+    public EndScreen endScreen;
+
     public RobotMenu robotMenu;
 
     public HighscoreHandler highscorehandler;
 
-    public MyGame() : base(1920, 1080, false, false, 1920, 1080, false)		// Create a window that's 800x600 and NOT fullscreen
-	{
-		Instance = this;
-		targetFps = 1000;
+    public MyGame() : base(1920, 1080, false, false, 1920, 1080, false)     // Create a window that's 800x600 and NOT fullscreen
+    {
+        Instance = this;
+        targetFps = 1000;
         GL.ClearColor(0f, 0f, 0f, 1);
 
         highscorehandler = new HighscoreHandler();
@@ -46,6 +48,7 @@ public class MyGame : Game
         menuScores = new MenuScores();
         livesMenu = new LivesMenu();
         robotMenu = new RobotMenu();
+        endScreen = new EndScreen();
 
         AddChild(menuScreen);
         AddChild(livesMenu);
@@ -63,9 +66,10 @@ public class MyGame : Game
         AddChild(robotMenu);
 
         AddChild(menuScores);
+        AddChild(endScreen);
         AddChild(musicHandler);
 
-        
+
 
         OnStartup();
         livesMenu.SetLives();
@@ -84,11 +88,18 @@ public class MyGame : Game
         menuScores.canBeInteractedWith = false;
         livesMenu.SetLives();
         livesMenu.SetRoundsRemaining();
+        endScreen.visible = false;
+
+        if (player1.health <= 0 || player2.health <= 0 || roundsRemaining <= 0) 
+        {
+            Console.WriteLine("Should End!");
+            endScreen.visible = true;
+        }
     }
 
     void OnStartup()
     {
-        roundsRemaining = 5;
+        roundsRemaining = 3;
         menuScores.visible = false;
         menuScores.canBeInteractedWith = false;
         playerMenu.visible = true;
@@ -99,12 +110,13 @@ public class MyGame : Game
         coinMenu.canBeInteractedWith = true;
         player1 = new Player(1);
         player2 = new Player(2);
+        endScreen.visible = false;
         playerMenu.Deselect();
     }
 
     void OnCoinAnimationEnd()
     {
-        
+        endScreen.visible = false;
         playerMenu.inEditMode = false;
         musicHandler.canBeInteractedWith = true;
         menuScreen.canBeInteractedWith = false;

@@ -119,6 +119,7 @@
     <Compile Include="GXPEngine\Objects\Handlers\Data\CheckingData.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\Data\CheckingNote.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\Data\Highscore.cs" />
+    <Compile Include="GXPEngine\Objects\Handlers\EndScreen.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\HighscoreHandler.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\MainMenuBackgroundHandler.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\MenuMusicHandler.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="GXPEngine\Objects\Scenes\MainMenuScreen.cs" />
     <Compile Include="GXPEngine\Objects\Scenes\MenuOverlay.cs" />
     <Compile Include="GXPEngine\Objects\Scenes\MenuScores.cs" />
+    <Compile Include="GXPEngine\Objects\Scenes\MenuScoresRobot.cs" />
     <Compile Include="GXPEngine\Objects\Scenes\MenuScreen.cs" />
     <Compile Include="GXPEngine\Objects\NoteObject.cs" />
     <Compile Include="GXPEngine\Objects\Button.cs" />
