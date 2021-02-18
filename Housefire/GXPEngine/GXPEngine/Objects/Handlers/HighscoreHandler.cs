@@ -59,6 +59,7 @@ namespace GXPEngine.Objects.Handlers
 
         public void WriteScore(string internalName, string name, int score, int combo)
         {
+            if (score == 0 || combo == 0) return;
             if (!Directory.Exists("Highscores")) Directory.CreateDirectory("Highscores");
             if (!File.Exists("Highscores/" + internalName + ".high")) File.Create("Highscores/" + internalName + ".high").Close();
             string fileText = File.ReadAllText("Highscores/" + internalName + ".high");
@@ -71,7 +72,7 @@ namespace GXPEngine.Objects.Handlers
         {
             try
             {
-                return highscores[internalName];
+                return (from score in highscores[internalName] orderby score.score descending select score).ToList();
             }
             catch
             {
