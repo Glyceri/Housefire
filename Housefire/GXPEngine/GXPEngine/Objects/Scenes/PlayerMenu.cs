@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace GXPEngine.Objects.Scenes
 {
-
     enum MenuState
     {
         PlayerSelect,
@@ -116,6 +115,7 @@ namespace GXPEngine.Objects.Scenes
         {
             using (Bitmap bitmap = new Bitmap("notsellectedsong.png"))
             {
+                
                 textPlayerOneBackDrop = new BeatmapButtonEasyDraw(onePlayerButton.width - 100, 100, false);
                 textPlayerOneBackDrop.DrawSprite(bitmap, new Vector2(textPlayerOneBackDrop.width / (float)bitmap.Width, textPlayerOneBackDrop.height / (float)bitmap.Height));
                 textPlayerOneBackDrop.SetXY(((onePlayerButton.width - textPlayerOneBackDrop.width) / (float)2), 650);
@@ -173,7 +173,7 @@ namespace GXPEngine.Objects.Scenes
             }
         }
 
-        void Deselect()
+        public void Deselect()
         {
             inEditMode = false;
             playerEdited = 0;
