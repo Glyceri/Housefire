@@ -88,16 +88,17 @@ public class MyGame : Game
         menuScores.canBeInteractedWith = false;
         livesMenu.SetLives();
         livesMenu.SetRoundsRemaining();
-        endScreen.visible = false;
+        endScreen.canBeInteractedWith = false;
 
         if (player1.health <= 0 || player2.health <= 0 || roundsRemaining <= 0) 
         {
             Console.WriteLine("Should End!");
-            endScreen.visible = true;
+            endScreen.canBeInteractedWith = true;
+            menuScreen.canBeInteractedWith = false;
         }
     }
 
-    void OnStartup()
+    public void OnStartup()
     {
         roundsRemaining = 3;
         menuScores.visible = false;
@@ -110,7 +111,7 @@ public class MyGame : Game
         coinMenu.canBeInteractedWith = true;
         player1 = new Player(1);
         player2 = new Player(2);
-        endScreen.visible = false;
+        endScreen.canBeInteractedWith = false;
         playerMenu.Deselect();
     }
 
@@ -141,6 +142,8 @@ public class MyGame : Game
         beatmapHandler = new BeatmapHandler(beatmap);
     }
 
+    public bool developerMode = false;
+
     void Update()
 	{
         counter += Time.deltaTime;
@@ -158,60 +161,19 @@ public class MyGame : Game
             }
         }
 
-
-        if (!playerMenu.inEditMode && (!beatmapHandler?.isPlaying ?? false))
+        if(Input.GetKey(Key.LEFT_CTRL) && Input.GetKeyDown(Key.E))
         {
-            if (Input.GetKeyDown(Key.ENTER))
-            {
-                beatmapHandler?.Play();
-            }
-
-            
-
-            if (Input.GetKeyDown(Key.BACKSPACE))
-            {
-                OnStartup();
-            }
-
-            if (Input.GetKeyDown(Key.G))
-            {
-                musicHandler.canBeInteractedWith = !musicHandler.canBeInteractedWith;
-            }
-
-            if (Input.GetKeyDown(Key.H))
-            {
-                menuScreen.menuScreen.canBeInteractedWith = !menuScreen.menuScreen.canBeInteractedWith;
-            }
-
-            if (Input.GetKeyDown(Key.F))
-            {
-                coinMenu.visible = !coinMenu.visible;
-            }
-
-            if (Input.GetKeyDown(Key.J))
-            {
-                musicHandler.visible = !musicHandler.visible;
-            }
-
-            if (Input.GetKeyDown(Key.K))
-            {
-                menuScreen.menuScreen.visible = !menuScreen.menuScreen.visible;
-            }
+            developerMode = !developerMode;
         }
 
-        if (Input.GetKeyDown(Key.U))
-        {
-            if(beatmapHandler != null)
-                if(beatmapHandler.beatmapPlayer != null)
-            beatmapHandler.beatmapPlayer.forceStop = true;
-        }
+      
         if (counter >= 1)
         {
             counter = 0;
             Debug.WriteLine(currentFps);
         }
         
-        if (Input.GetKeyDown(Key.C))
+        if (Input.GetKeyDown(Key.C) && developerMode)
         {
             drawCollision = !drawCollision;
         }

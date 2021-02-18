@@ -119,7 +119,7 @@
     <Compile Include="GXPEngine\Objects\Handlers\Data\CheckingData.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\Data\CheckingNote.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\Data\Highscore.cs" />
-    <Compile Include="GXPEngine\Objects\Handlers\EndScreen.cs" />
+    <Compile Include="GXPEngine\Objects\Scenes\EndScreen.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\HighscoreHandler.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\MainMenuBackgroundHandler.cs" />
     <Compile Include="GXPEngine\Objects\Handlers\MenuMusicHandler.cs" />
