@@ -43,8 +43,8 @@ namespace GXPEngine.Objects.Handlers
                         if (notes[i].length > 0)
                         {
                             lane.SpawnNote(notes[i], "Note.png");
-                            lane.SpawnNote(new Note(notes[i].lane, notes[i].hitTime, -1), "NoteOpenTop.png");
-                            notesInQueue.Add(new Note(notes[i].lane, notes[i].hitTime + notes[i].length, -1));
+                            lane.SpawnNote(new Note(notes[i].lane, notes[i].hitTime, notes[i].hitSound, -1), "NoteOpenTop.png");
+                            notesInQueue.Add(new Note(notes[i].lane, notes[i].hitTime + notes[i].length, notes[i].hitSound, -1));
                         }
                         else
                         {
