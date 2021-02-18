@@ -1,5 +1,7 @@
 using System;
+using System.Drawing;
 using GXPEngine.Core;
+using Rectangle = GXPEngine.Core.Rectangle;
 
 namespace GXPEngine
 {
@@ -273,6 +275,11 @@ namespace GXPEngine
 			get { return _color; }
 			set { _color = value & 0xFFFFFF; }
 		}
+
+		public void SetColor(Color color)
+        {
+			SetColor(color.R, color.G, color.B);
+        }
 
 		//------------------------------------------------------------------------------------------------------------------------
 		//														color
