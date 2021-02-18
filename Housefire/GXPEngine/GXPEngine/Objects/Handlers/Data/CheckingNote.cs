@@ -11,10 +11,12 @@ namespace GXPEngine.Objects.Handlers.Data
 
         public int noteTime;
         public bool shouldRewardPoints;
-        public CheckingNote(int note, bool shouldRewardPoints)
+        public string noteHitsound;
+        public CheckingNote(int note, bool shouldRewardPoints, string hitsound)
         {
             noteTime = note;
             this.shouldRewardPoints = shouldRewardPoints;
+            noteHitsound = hitsound;
         }
     }
 }
