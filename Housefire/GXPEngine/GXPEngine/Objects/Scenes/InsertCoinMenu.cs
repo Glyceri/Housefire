@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GXPEngine.Core.Audio;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -36,11 +37,11 @@ namespace GXPEngine.Objects.Scenes
                 DrawSprite(roboRhythm, new Vector2(1400 / (float)roboRhythm.Width, 1000 / (float)roboRhythm.Height), 0.25f,0, false);
             }
 
-            using(Bitmap bitmap = new Bitmap("backgroundpanel.png")) { 
+            using(Bitmap bitmap = new Bitmap("insertcoin2.png")) { 
                 button = new Button(1920, 100);
                
                 button.DrawSprite(bitmap, new Vector2(button.width / (float)bitmap.Width, button.height / (float)bitmap.Height), 0, 0, false);
-                button.SetXY(0, (1080 / (float)2) - (bitmap.Height / (float)2));
+                button.SetXY(0, (1080 / (float)2) - (button.height / (float)2));
                 button.SetColor(255, 255, 255);
                 button.TextAlign(CenterMode.Center, CenterMode.Center);
                 button.TextSize(40);
@@ -84,6 +85,7 @@ namespace GXPEngine.Objects.Scenes
             if (button.Pressed())
             {
                 doAnimation = true;
+                new Sound("Impact_-_Robot_Punch.wav")?.Play(false, 0, AudioHandler.volume / (float)100);
             }
         }
 
