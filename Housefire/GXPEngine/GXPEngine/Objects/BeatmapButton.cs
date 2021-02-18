@@ -136,7 +136,7 @@ namespace GXPEngine.Objects
             textPanel.TextSize(10);
             textPanel.Text("____________________________________________________________________________________", 110, 94);
             textPanel.TextSize(20);
-            textPanel.Text("BPM: " + beatmapSmall?.BPM, 97, 120);
+            textPanel.Text("BPM: " + (beatmapSmall?.actualbpm != -1 ? beatmapSmall?.actualbpm : beatmapSmall?.BPM), 97, 120);
             textPanel.TextSize(10);
             textPanel.Text("____________________________________________________________________________________", 97, 140);
         }
