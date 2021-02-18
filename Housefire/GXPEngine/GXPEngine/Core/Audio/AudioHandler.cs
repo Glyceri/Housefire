@@ -38,6 +38,7 @@ namespace GXPEngine.Core.Audio
                 {
                     try
                     {
+                        Console.WriteLine(audioPath);
                         AudioFileReader fileReader = new AudioFileReader(audioPath);
                         WaveOutEvent outputDevice = new WaveOutEvent();
                         outputDevice.Init(fileReader);
