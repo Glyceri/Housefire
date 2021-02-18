@@ -1,4 +1,5 @@
 ﻿using GXPEngine.Core;
+using GXPEngine.Core.Audio;
 using GXPEngine.Objects.Handlers;
 using System;
 using System.Collections.Generic;
@@ -253,6 +254,7 @@ namespace GXPEngine.Objects.Scenes
                         animation = true;
                         delta = 0;
                         canBeInteractedWith = false;
+                        new Sound("soft-hitnormal.wav")?.Play(false, 0, AudioHandler.volume / (float)100);
                     }
                 }
             }
@@ -261,8 +263,6 @@ namespace GXPEngine.Objects.Scenes
             {
                 delta += Time.deltaTime * animationSpeed;
 
-                //player1Panel.SetXY(240 - (delta * 2000), 150);
-                //player2Panel.SetXY(1180 + (delta * 2000), 150);
                 MyGame.Instance.menuScreen.menuScreen.globalOffset = 1 - delta;
                 MyGame.Instance.menuScreen.menuScreen.menuSongInfo.startButtonPanel.SetXY(510, 210 - ((1 - delta) * 1000));
                 MyGame.Instance.menuScreen.menuScreen.menuSongInfo.highscorePanel.SetXY(70 - ((1 - delta) * 1000), 325);
@@ -280,30 +280,24 @@ namespace GXPEngine.Objects.Scenes
                     playerDraw = false;
                     playerWinTimer = 0;
                     winText.Clear(Color.Transparent);
-                    robotMenu.Reset();
+                    
 
                     delta = 0;
                     animation = false;
                     canBeInteractedWith = false;
                     visible = false;
 
-                    //player1Panel.SetXY(240 , 150);
-                    //player2Panel.SetXY(1180 , 150);
+                    robotMenu.Reset();
+
                     MyGame.Instance.menuScreen.menuScreen.globalOffset = 0;
                     MyGame.Instance.OnPlayerSelectEnd();
                     MyGame.Instance.menuScreen.menuScreen.menuSongInfo.startButtonPanel.SetXY(510, 210);
                     MyGame.Instance.menuScreen.menuScreen.menuSongInfo.highscorePanel.SetXY(70, 325);
                     MyGame.Instance.menuScreen.menuScreen.menuSongInfo.songInfoPanel.SetXY(510, 370);
-
-                    robotMenu.robotOneHolder.SetXY(230 - 2000, 260);
-                    robotMenu.robotTwoHolder.SetXY(1260 + 2000, 260);
+                    
                     winBackPanel.SetXY((1920 - winBackPanel.width) / 2, 50);
                 }
             }
-
-
-
-
         }
     }
 }
