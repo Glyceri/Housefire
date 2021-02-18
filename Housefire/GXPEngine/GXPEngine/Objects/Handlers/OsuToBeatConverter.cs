@@ -24,8 +24,17 @@ namespace GXPEngine.Objects.Handlers
                     newLine += csl[2] + ",";
                     if (!line.Contains('|'))
                     {
-                        if (csl[5].Split(':').Length == 5)  newLine += "-1;";
-                        else                                newLine += csl[5].Split(':')[0] + ";";
+                        if (csl[5].Split(':').Length == 5)  newLine += "-1";
+                        else                                newLine += csl[5].Split(':')[0];
+
+                        if (line.Contains(".wav"))
+                        {
+                            string[] semiLine = line.Split(':');
+                            string actualLine = semiLine[semiLine.Length - 1];
+                            newLine += "," + actualLine;
+                        }
+
+                        newLine += ";";
                     }
                     else
                     {
