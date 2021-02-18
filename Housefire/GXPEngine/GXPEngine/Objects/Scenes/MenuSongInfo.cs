@@ -1,6 +1,7 @@
 ﻿using GXPEngine.Core;
 using GXPEngine.Core.Audio;
 using GXPEngine.Objects.Handlers;
+using GXPEngine.Objects.Handlers.Data;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -129,10 +130,30 @@ namespace GXPEngine.Objects.Scenes
             songInfoTextPanel.Clear(Color.Transparent);
             songInfoTextPanel.TextSize(40);
             songInfoTextPanel.Text("Lanes: " + beatmap.lanes.ToString(), 10, 80);
-            songInfoTextPanel.Text("BPM: " + beatmap.BPM.ToString(), 10, 130);
+            songInfoTextPanel.Text("BPM: " + (beatmap.actualbpm == -1 ? beatmap.BPM.ToString() : beatmap.actualbpm.ToString()), 10, 130);
             songInfoTextPanel.Text("Difficulty: " + beatmap.difficulty.ToString(), 10, 180);
             songInfoTextPanel.Text("Notes: " + beatmap.notesAmount.ToString(), 10, 230);
             songInfoTextPanel.Text("Slides: " + beatmap.sliderAmount.ToString(), 10, 280);
+
+            SetHighscores(beatmap);
+        }
+
+        void SetHighscores(BeatmapSmall beatmap)
+        {
+            highscorePanelScores.Clear(Color.Transparent);
+            List<Highscore> highscores = MyGame.Instance.highscorehandler.GetHighscores(beatmap.internalName);
+            using (Bitmap bitmap = new Bitmap("notsellectedsong.png"))
+            {
+                for (int i = 0; i < highscores.Count; i++)
+                {
+                    if (i >= 7) break;
+                    Highscore highscore = highscores[i];
+                    highscorePanelScores.DrawSprite(bitmap, new Vector2(0.22f, 0.4f),  0f, 0.42f * i);
+                    highscorePanelScores.TextAlign(CenterMode.Min, CenterMode.Min);
+                    highscorePanelScores.TextSize(19);
+                    highscorePanelScores.Text(highscore.name + ": " + '\n' + highscore.score + " | " + highscore.combo, 0.05f, 85*i);
+                }
+            }
         }
 
         bool inEndingAnimation = false;
