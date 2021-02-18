@@ -35,6 +35,8 @@ namespace GXPEngine.Objects
         public KeyboardHook keyboardHook;
         public BeatmapScoring beatmapScoring;
 
+        public EasyDraw hitText;
+
 
         EasyDraw livesPanelText;
 
@@ -55,7 +57,7 @@ namespace GXPEngine.Objects
 
             scale = new Vector2(0.5f, 1f);
 
-          
+           
 
             using (Bitmap bitmap = new Bitmap("extrathings/sidething.png"))
             {
@@ -145,6 +147,8 @@ namespace GXPEngine.Objects
 
                 AddChild(scoreBackdrop);
                 AddChild(comboBackdrop);
+
+               
             }
 
             //AddDebugOrigin();
@@ -164,6 +168,25 @@ namespace GXPEngine.Objects
            
 
             beatmapScoring = new BeatmapScoring(beatmapHandler, this, player);
+
+
+            hitText = new EasyDraw(300, 100);
+            hitText.Clear(Color.Transparent);
+            hitText.SetXY(-(hitText.width / (float)2) - 40, 640);
+            hitText.TextSize(30);
+            hitText.TextAlign(CenterMode.Center, CenterMode.Center);
+            AddChild(hitText);
+        }
+
+        float clearTextcounter = 0;
+        bool clearText = false;
+        public void SetText(string text, Color color)
+        {
+            hitText.Clear(Color.Transparent);
+            hitText.SetColor(color);
+            hitText.Text(text, hitText.width / (float)2, hitText.height / (float)2);
+            clearTextcounter = 0.33f;
+            clearText = true;
         }
 
         void AddDebugOrigin()
@@ -249,6 +272,20 @@ namespace GXPEngine.Objects
 
         public void Tick()
         {
+            if(clearTextcounter >= 0 && clearText)
+            {
+                clearTextcounter -= Time.deltaTime;
+                hitText.scale = new Vector2(1 + clearTextcounter, 1 + clearTextcounter);
+                //hitText.SetXY(-(hitText.width / (float)2), 640);
+            }
+            if(clearTextcounter <=0 && clearText)
+            {
+                clearText = false;
+                clearTextcounter = 0;
+                hitText.Clear(Color.Transparent);
+                hitText.scale = Vector2.One;
+                //hitText.SetXY(-(hitText.width / (float)2), 640);
+            }
             foreach(Lane lane in lanes)
             {
                 lane.LaneUpdate();
