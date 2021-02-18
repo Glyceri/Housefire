@@ -51,7 +51,6 @@ namespace GXPEngine.Objects.Handlers
             //SpawnBackground();
             SpawnLanes();
             SpawnBeatmapPlayer();
-            
             MyGame.Instance.SetChildIndex(MyGame.Instance.musicHandler, MyGame.Instance.GetChildren().Count);
         }
 
@@ -99,12 +98,22 @@ namespace GXPEngine.Objects.Handlers
             MyGame.Instance.AddChild(lanes[0] = new LaneObject(this, activeBeatmap.lanes, MyGame.Instance.player1, false));
             lanes[0].SetXY(-1000, 100);
             lanes[0].rotation = 0;
-            lanes[0].scoreBackdrop.SetXY(20, 200);
 
-            MyGame.Instance.AddChild(lanes[1] = new LaneObject(this, activeBeatmap.lanes, MyGame.Instance.player2, false));
+            lanes[0].scale *= new Vector2(1.2f, 1f);
+
+
+
+            MyGame.Instance.AddChild(lanes[1] = new LaneObject(this, activeBeatmap.lanes, MyGame.Instance.player2, true));
             lanes[1].SetXY(-1000, 100);
             lanes[1].rotation = 0;
-            lanes[1].scoreBackdrop.SetXY((1920 - (lanes[1].scoreBackdrop.width ) - 20), 200);
+
+            lanes[1].scale *= new Vector2(1.2f, 1f);
+
+        }
+
+        void SpawnCharacterImages()
+        {
+
         }
 
         void SpawnBeatmapPlayer()
@@ -128,17 +137,22 @@ namespace GXPEngine.Objects.Handlers
             
             if (lanes.Count >= 2)
             {
-                lanes[0].SetXY(-1500 + (2000*delta), 170);
-                lanes[1].SetXY(3420 - (2000 * delta), 170);
+                lanes[0].SetXY(-1300 + (2000*delta), 170);
+                lanes[1].SetXY(3220 - (2000 * delta), 170);
+                MyGame.Instance.robotMenu.delta = delta;
 
-                lanes[1].scoreBackdrop.SetXY((1920 - (lanes[1].scoreBackdrop.width) - 20 + 2000 - (2000 * delta)), 200);
+                //lanes[1].scoreBackdrop.SetXY((1920 - (lanes[1].scoreBackdrop.width) - 20 + 2000 - (2000 * delta)), 200);
 
-                lanes[0].scoreBackdrop.SetXY((-1980 +  (2000 * delta)), 200);
+                //lanes[0].scoreBackdrop.SetXY((-1980 +  (2000 * delta)), 200);
             }
 
             if (!isPlaying) return;
+            if (Input.GetKeyDown(Key.ESCAPE))
+            {
+                beatmapPlayer.forceStop = true;
+            }
 
-            Timers();
+                Timers();
             Updates();
             if (infiniteBeatmapTimer >= 0 && !musicIsPlaying)
             {
