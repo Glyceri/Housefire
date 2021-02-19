@@ -30,6 +30,8 @@ namespace GXPEngine.Objects.Handlers
 
         public void DrawTextBox()
         {
+            
+
             textBox.Clear(Color.Transparent);
             textBox.TextAlign(CenterMode.Center, CenterMode.Center);
             textBox.TextSize(50);
